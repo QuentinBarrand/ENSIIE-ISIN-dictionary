@@ -1,10 +1,11 @@
-#include "args.h"
+#include "Dconfig.h"
+#include "Ddictionary.h"
+
 
 int main(int argc, char** argv)
 {
-	#ifdef DEBUG
-	Dargs_help(argv[0]);
-	#endif
+    Dconfig* config;
+    config = Ddictionary_parseArgs(argc, argv);
 
-	return 0;
+    return 0;
 }

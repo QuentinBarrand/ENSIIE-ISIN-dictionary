@@ -1,12 +1,12 @@
 GCC_OPTS = -O3
 
-all: main.c Dnode.o args.o
-	gcc -o dictionnaire $(GCC_OPTS) main.c Dnode.o args.o
+all: main.c Dnode.o Ddictionary.o
+	gcc -o dictionnaire $(GCC_OPTS) main.c Dnode.o Ddictionary.o
 
 # Application
 
-args.o: args.h args.c
-	gcc -c -o $@ $(GCC_OPTS) args.c
+Ddictionary.o: Ddictionary.h Ddictionary.c
+	gcc -c -o $@ $(GCC_OPTS) Ddictionary.c
 
 # Types
 
