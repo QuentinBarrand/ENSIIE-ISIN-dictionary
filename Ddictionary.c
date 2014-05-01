@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Ddictionary.h"
 
@@ -19,7 +20,8 @@ void Ddictionary_help(char* execName)
         "\n\t-if <file>    Utiliser le fichier file à la place de l'entrée "
             "standard pour lire les commandes"
         "\n\t-p            Imprime sous un format lisible la structure de "
-            "données", execName);
+            "données"
+        "\n", execName);
 }
 
 
@@ -27,30 +29,87 @@ extern Dconfig*
 Ddictionary_parseArgs(int argc, char** argv)
 {
     char* currentArg;
-    int i, definitionFileSeen;
+    int i;
 
     // There should be at least 2 arguments; if not, we print the help
     if(argc < 2)
     {
-        Ddictionary_help(argv[0]);
+        fprintf(stderr, "%s : Merci: s de fournir un fichier dans lequel lire "
+            " les définitions de bases et de synonymes."
+            "\nVoir %s -h pour l'aide."
+            "\n", argv[0], argv[0]);
         exit(ARGS_ERROR);
     }
 
     Dconfig* config;
-    config = (Dconfig*)malloc(sizeof(Dconfig));
 
-    definitionFileSeen = FALSE;
+    // We allocate the Dconfig object with a 0 value to all of its attributes
+    config = calloc(1, sizeof(Dconfig));
 
-    for(i = 0; i < argc; i++)
+    for(i = 1; i < argc; i++)
     {
         currentArg = argv[i];
 
         if(currentArg[0] != '-')
         {
-            if(! definitionFileSeen)
+            // If this is the first time we are seing a dash-less argument
+            if(config->definitionsPath == NULL)
             {
-                definitionFileSeen = TRUE;
                 config->definitionsPath = currentArg;
+            }
+            else
+            {
+                fprintf(stderr, "%s : Argument %s non reconnu."
+                    "\n", argv[0], currentArg);
+            }
+        }
+        else
+        {
+            // -if <commands> is the only argument where strlen(2) > 2
+            if(strlen(currentArg) > 2)
+            {
+                if(strcmp(currentArg, "-if") == 0)
+                {
+                    // If nothing has been supplied after -if (last argument)
+                    if(i == argc - 1)
+                    {
+                    fprintf(stderr, "%s : -if doit être suivi d'un nom de "
+                        "fichier de commandes."
+                        "\n", argv[0]);
+                    }
+                    else
+                    {
+                        config->commandsPath = currentArg;
+                        i++;
+                    }
+                }
+                else
+                {
+                    fprintf(stderr, "%s : Argument %s non reconnu."
+                        "\n", argv[0], currentArg);
+                }
+
+                continue;
+            }
+
+            // All the other arguments
+            switch(currentArg[1])
+            {
+                case 'd':
+                    config->d_option = TRUE;
+                    break;
+
+                case 'h':
+                    config->h_option = TRUE;
+                    break;
+
+                case 'p':
+                    config->p_option = TRUE;
+                    break;
+
+                default:
+                    fprintf(stderr, "%s : Argument %s non reconnu."
+                        "\n", argv[0], currentArg);
             }
         }
     }
