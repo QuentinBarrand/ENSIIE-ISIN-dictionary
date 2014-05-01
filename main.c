@@ -1,9 +1,9 @@
-#include "utils.h"
+#include "args.h"
 
 int main(int argc, char** argv)
 {
 	#ifdef DEBUG
-	Dutils_help(argv[0]);
+	Dargs_help(argv[0]);
 	#endif
 
 	return 0;

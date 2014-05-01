@@ -1,10 +1,19 @@
 GCC_OPTS = -O3
 
-all: main.c utils.o
-	gcc -o dictionnaire $(GCC_OPTS) main.c utils.o
+all: main.c Dnode.o args.o
+	gcc -o dictionnaire $(GCC_OPTS) main.c Dnode.o args.o
 
-utils.o:
-	gcc -c -o $@ $(GCC_OPTS) utils.c
+# Application
+
+args.o: args.h args.c
+	gcc -c -o $@ $(GCC_OPTS) args.c
+
+# Types
+
+Dnode.o: Dnode.h Dnode.c
+	gcc -c -o $@ $(GCC_OPTS) Dnode.c
+
+# Build targets
 
 dev:
 	make GCC_OPTS="-Wall -Wextra -DDEBUG -g"

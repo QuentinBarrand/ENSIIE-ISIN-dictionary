@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void Dutils_help(char* execName)
+void Dargs_help(char* execName)
 {
 	printf("Usage : %s <options>"
 		"\n-h            Afficher cette aide"
