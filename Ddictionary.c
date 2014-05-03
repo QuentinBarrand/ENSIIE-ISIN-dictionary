@@ -5,6 +5,7 @@
 #include "Ddictionary.h"
 
 #include "Dconfig.h"
+#include "Dnode.h"
 #include "Dutils.h"
 
 
@@ -34,7 +35,7 @@ Ddictionary_parseArgs(int argc, char** argv)
     // There should be at least 2 arguments; if not, we print the help
     if(argc < 2)
     {
-        fprintf(stderr, "%s : Merci: s de fournir un fichier dans lequel lire "
+        fprintf(stderr, "%s : Merci: de fournir un fichier dans lequel lire "
             " les définitions de bases et de synonymes."
             "\nVoir %s -h pour l'aide."
             "\n", argv[0], argv[0]);
@@ -114,5 +115,27 @@ Ddictionary_parseArgs(int argc, char** argv)
         }
     }
 
+    // So here, we should have a not null config->definitionsPath
+    if(config->definitionsPath == NULL)
+    {
+        fprintf(stderr, "%s : Merci: de fournir un fichier dans lequel lire "
+            " les définitions de bases et de synonymes."
+            "\nVoir %s -h pour l'aide."
+            "\n", argv[0], argv[0]);
+        exit(ARGS_ERROR);
+    }
+
     return config;
+}
+
+extern Dnode*
+Ddictionary_processArgs(Dconfig* config)
+{
+    // TODO
+}
+
+extern void
+Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
+{
+    // TODO
 }
