@@ -8,10 +8,16 @@
 #include "Dnode.h"
 #include "Dutils.h"
 
+/*******************************************************************************
+ * Static declarations
+ */
 
 static void
 Ddictionary_help(char*);
 
+/*******************************************************************************
+ * Static functions
+ */
 
 static void 
 Ddictionary_help(char* execName)
@@ -30,8 +36,18 @@ Ddictionary_help(char* execName)
         "\n", execName);
 }
 
-extern Dconfig*
-Ddictionary_parseArgs(int argc, char** argv)
+/*******************************************************************************
+ * Extern functions
+ */
+
+extern Dnode*
+Ddictionary_create(Dconfig* config)
+{
+
+}
+
+extern void 
+Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
 {
     char* currentArg;
     int i;
@@ -46,10 +62,7 @@ Ddictionary_parseArgs(int argc, char** argv)
         exit(ARGS_ERROR);
     }
 
-    Dconfig* config;
-
-    // We allocate the Dconfig object with a 0 value to all of its attributes
-    config = calloc(1, sizeof(Dconfig));
+    config->execName = argv[0];
 
     for(i = 1; i < argc; i++)
     {
@@ -118,24 +131,20 @@ Ddictionary_parseArgs(int argc, char** argv)
             }
         }
     }
+}
 
+extern void
+Ddictionary_processArgs(Dconfig* config)
+{
     // So here, we should have a not null config->definitionsPath
     if(config->definitionsPath == NULL)
     {
         fprintf(stderr, "%s : Merci: de fournir un fichier dans lequel lire "
             " les définitions de bases et de synonymes."
             "\nVoir %s -h pour l'aide."
-            "\n", argv[0], argv[0]);
+            "\n", config->execName, config->execName);
         exit(ARGS_ERROR);
     }
-
-    return config;
-}
-
-extern Dnode*
-Ddictionary_processArgs(Dconfig* config)
-{
-    // TODO
 }
 
 extern void

@@ -6,10 +6,13 @@
 #include "Dnode.h"
 
 
-extern Dconfig* 
-Ddictionary_parseArgs(int, char**);
-
 extern Dnode*
+Ddictionary_create(Dconfig*);
+
+extern void 
+Ddictionary_parseArgs(Dconfig*, int, char**);
+
+extern void
 Ddictionary_processArgs(Dconfig*);
 
 extern void

@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include "Dconfig.h"
 #include "Ddictionary.h"
 
@@ -8,16 +6,23 @@ int main(int argc, char** argv)
 {
     // Get the config from the command-line arguments
     Dconfig* config;
-    config = Ddictionary_parseArgs(argc, argv);
+    config = Dconfig_new();
 
-    // Trigger functions required by configuration and get the dictionary
+    Ddictionary_parseArgs(config, argc, argv);
+
+    // Trigger actions required by configuration
+    Ddictionary_processArgs(config);
+
+    // Get the dictionary from configuration
     Dnode* dictionary;
-    dictionary = Ddictionary_processArgs(config);
+    dictionary = Ddictionary_create(config);
 
     // Run the interactive mode
 
 
     // Free the config
+    Dconfig_free(config);
+
     free(config);
 
     return 0;
