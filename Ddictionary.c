@@ -8,6 +8,7 @@
 #include "Dnode.h"
 #include "Dutils.h"
 
+
 /*******************************************************************************
  * Static declarations
  */
@@ -47,7 +48,51 @@ Ddictionary_help(char* execName)
 static int
 Ddictionary_readCommands(Dconfig* config)
 {
-    // TODO
+    int i;
+    char c;
+
+    FILE* stream;
+
+    if((stream = fopen(config->commandsPath, "r")) == NULL)
+    {
+        fprintf(stderr, "%s : Impossible d'ouvrir en lecture le fichier de "
+            " définitions %s. Vérifiez que le fichier existe et réessayez."
+            "\n", config->execName, config->definitionsPath);
+
+        return FALSE;        
+    }
+
+    while((c = fgetc(stream)) != EOF )
+    {
+        if(c == '\n')
+        {
+            config->commandsNb++;
+        }
+    }
+
+    config->commandsNb++;
+
+    // Allocate config->commands with the correct number of lines.
+    config->commands = malloc(config->commandsNb * sizeof(char*));
+
+    stream = freopen(config->commandsPath, "r", stream);
+
+    for(i = 0; i < config->commandsNb; i++)
+    {
+        /* This parameter is actually not used by getline() since 
+         * config->commands[i] is NULL.
+         * getline() thus ignores it, allocates the appropriate amount of memory
+         * and puts a pointer to that place into config->commands[i].
+         */
+        size_t length;
+        length = getline(&config->commands[i], &length, stream);
+
+        // config->commands[i] contains all the line, we remove '\n'.
+        config->commands[i][length - 1] = '\0';
+    }
+
+    fclose(stream);
+
     return FALSE;
 }
 
@@ -66,7 +111,7 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     }
 
     // TODO
-    return FALSE;
+    return TRUE;
 }
 
 /*******************************************************************************

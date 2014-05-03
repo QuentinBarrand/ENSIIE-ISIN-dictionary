@@ -1,6 +1,7 @@
 #ifndef DNODE_H
 #define DNODE_H
 
+
 typedef struct _Dnode {
     char word[20];
 
@@ -25,5 +26,6 @@ Dnode_addSynonym(Dnode* tree, char* base, char* derive);
 
 extern void 
 Dnode_free(Dnode* tree);
+
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef DCONFIG_H
 #define DCONFIG_H
 
+
 typedef struct _Dconfig {
     char* execName;
 
@@ -21,5 +22,6 @@ Dconfig_new();
 
 extern void
 Dconfig_free(Dconfig*);
+
 
 #endif
