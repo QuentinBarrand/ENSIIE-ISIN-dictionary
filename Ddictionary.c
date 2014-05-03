@@ -62,7 +62,7 @@ Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
         exit(ARGS_ERROR);
     }
 
-    config->execName = argv[0];
+    // config->execName = argv[0];
 
     for(i = 1; i < argc; i++)
     {
@@ -97,8 +97,7 @@ Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
                     }
                     else
                     {
-                        config->commandsPath = currentArg;
-                        i++;
+                        config->commandsPath = argv[++i];
                     }
                 }
                 else
