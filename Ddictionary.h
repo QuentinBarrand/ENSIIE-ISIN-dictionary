@@ -6,9 +6,6 @@
 #include "Dnode.h"
 
 
-extern void
-Ddictionary_help(char*);
-
 extern Dconfig* 
 Ddictionary_parseArgs(int, char**);
 

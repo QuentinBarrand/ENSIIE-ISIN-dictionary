@@ -9,7 +9,12 @@
 #include "Dutils.h"
 
 
-void Ddictionary_help(char* execName)
+static void
+Ddictionary_help(char*);
+
+
+static void 
+Ddictionary_help(char* execName)
 {
     printf("Usage : %s <options> <definitions>"
         "\n<definitions> : Fichier de définitions de bases et de synonymes"
@@ -24,7 +29,6 @@ void Ddictionary_help(char* execName)
             "données"
         "\n", execName);
 }
-
 
 extern Dconfig*
 Ddictionary_parseArgs(int argc, char** argv)
