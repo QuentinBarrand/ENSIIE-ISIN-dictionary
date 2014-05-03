@@ -8,22 +8,25 @@ int main(int argc, char** argv)
     Dconfig* config;
     config = Dconfig_new();
 
-    Ddictionary_parseArgs(config, argc, argv);
+    if(! Ddictionary_parseArgs(config, argc, argv))
+    {
+        Dconfig_free(config);
+        return 1;
+    }
 
-    // Trigger actions required by configuration
-    Ddictionary_processArgs(config);
-
-    // Get the dictionary from configuration
+    // Trigger actions required by configuration and get the dictionary
     Dnode* dictionary;
-    dictionary = Ddictionary_create(config);
+    if(! Ddictionary_processArgs(config, dictionary))
+    {
+        Dconfig_free(config);
+        return 1;
+    }
 
     // Run the interactive mode
 
 
     // Free the config
     Dconfig_free(config);
-
-    free(config);
 
     return 0;
 }

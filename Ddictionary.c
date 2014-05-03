@@ -15,6 +15,12 @@
 static void
 Ddictionary_help(char*);
 
+static int
+Ddictionary_readCommands(Dconfig*);
+
+static int
+Ddictionary_readDefinitions(Dconfig*, Dnode*);
+
 /*******************************************************************************
  * Static functions
  */
@@ -23,9 +29,8 @@ static void
 Ddictionary_help(char* execName)
 {
     printf("Usage : %s <options> <definitions>"
-        "\n<definitions> : Fichier de définitions de bases et de synonymes"
         "\n"
-        "\nOptions :"
+        "\n<options>"
         "\n\t-h            Afficher cette aide"
         "\n\t-d            Afficher pour chaque requête le nombre de cases "
             "parcourues"
@@ -33,20 +38,42 @@ Ddictionary_help(char* execName)
             "standard pour lire les commandes"
         "\n\t-p            Imprime sous un format lisible la structure de "
             "données"
+        "\n"
+        "\n<definitions>"
+        "\n\tFichier de définitions de bases et de synonymes"
         "\n", execName);
+}
+
+static int
+Ddictionary_readCommands(Dconfig* config)
+{
+    // TODO
+    return FALSE;
+}
+
+static int
+Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
+{
+    // Check if config->definitionsPath is not NULL
+    if(config->definitionsPath == NULL)
+    {
+        fprintf(stderr, "%s : Merci: de fournir un fichier dans lequel lire "
+            " les définitions de bases et de synonymes."
+            "\nVoir %s -h pour l'aide."
+            "\n", config->execName, config->execName);
+
+        return FALSE;
+    }
+
+    // TODO
+    return FALSE;
 }
 
 /*******************************************************************************
  * Extern functions
  */
 
-extern Dnode*
-Ddictionary_create(Dconfig* config)
-{
-
-}
-
-extern void 
+extern int 
 Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
 {
     char* currentArg;
@@ -59,10 +86,11 @@ Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
             " les définitions de bases et de synonymes."
             "\nVoir %s -h pour l'aide."
             "\n", argv[0], argv[0]);
-        exit(ARGS_ERROR);
+
+        return FALSE;
     }
 
-    // config->execName = argv[0];
+    config->execName = argv[0];
 
     for(i = 1; i < argc; i++)
     {
@@ -130,20 +158,38 @@ Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
             }
         }
     }
+
+    return TRUE;
 }
 
-extern void
-Ddictionary_processArgs(Dconfig* config)
+extern int
+Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
 {
-    // So here, we should have a not null config->definitionsPath
-    if(config->definitionsPath == NULL)
+    // Help ?
+    if(config->h_option)
     {
-        fprintf(stderr, "%s : Merci: de fournir un fichier dans lequel lire "
-            " les définitions de bases et de synonymes."
-            "\nVoir %s -h pour l'aide."
-            "\n", config->execName, config->execName);
-        exit(ARGS_ERROR);
+        Ddictionary_help(config->execName);
+
+        // Let's stop here if nothing else was supplied
+        if(config->definitionsPath == NULL)
+        {
+            return FALSE;
+        }
     }
+
+    // Import the definitions file
+    if(! Ddictionary_readDefinitions(config, dictionary))
+    {
+        return FALSE;
+    }
+
+    // Import the commands file
+    if(! Ddictionary_readCommands(config))
+    {
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 extern void
