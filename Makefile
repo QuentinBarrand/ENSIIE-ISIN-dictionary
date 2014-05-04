@@ -1,5 +1,7 @@
 GCC_OPTS = -O3
 
+.PHONY: doc
+
 all: main.c Dconfig.o Ddictionary.o Dnode.o
 	gcc -o dictionnaire $(GCC_OPTS) main.c Dconfig.o Dnode.o Ddictionary.o
 
@@ -17,6 +19,9 @@ Dnode.o: Dnode.h Dnode.c
 
 dev:
 	make GCC_OPTS="-Wall -Wextra -DDEBUG -g"
+
+doc: Makedoc
+	make -f Makedoc
 
 clean:
 	rm -rf *.o

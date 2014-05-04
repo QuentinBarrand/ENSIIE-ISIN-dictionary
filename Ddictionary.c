@@ -148,6 +148,14 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
  * Extern functions
  */
 
+/** Parses the program's arguments and populates a Dconfig object.
+ *
+ * \param config a Dconfig object to be populated.
+ * \param argc the program's number of arguments.
+ * \param argv the program's arguments.
+ *
+ * \returns `0` if there was an error, else `1`.
+ */
 extern int 
 Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
 {

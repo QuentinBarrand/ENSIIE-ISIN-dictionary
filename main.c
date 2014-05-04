@@ -1,5 +1,6 @@
 #include "Dconfig.h"
 #include "Ddictionary.h"
+#include "Dnode.h"
 
 
 int main(int argc, char** argv)
@@ -16,6 +17,8 @@ int main(int argc, char** argv)
 
     // Trigger actions required by configuration and get the dictionary
     Dnode* dictionary;
+    dictionary = Dnode_new();
+
     if(! Ddictionary_processArgs(config, dictionary))
     {
         Dconfig_free(config);
