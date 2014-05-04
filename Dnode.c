@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -29,9 +30,25 @@ Dnode_addSynonym(Dnode* tree, char* base, char* derive)
 extern void 
 Dnode_free(Dnode* tree)
 {
-    
-    // TODO
+    int i;
 
+    for(i = 0; i < 26; i++)
+    {
+        if(tree->children[i] != NULL)
+        {
+            Dnode_free(tree->children[i]);
+        }
+    }
+
+    // TODO : Free all linked lists
+
+    free(tree);
+}
+
+extern char**
+Dnode_getBases(char* word)
+{
+    // TODO
 }
 
 extern Dnode*
@@ -49,7 +66,7 @@ Dnode_getOrAddWord(Dnode* tree, char* word)
         
         if(currentNode->children[c - 'a'] == NULL)
         {
-            currentNode->children[c - 'a'] = malloc(sizeof(Dnode));
+            currentNode->children[c - 'a'] = Dnode_new();
         }
 
         currentNode = currentNode->children[c - 'a'];
@@ -61,12 +78,26 @@ Dnode_getOrAddWord(Dnode* tree, char* word)
     return currentNode;
 }
 
+extern char**
+Dnode_getSynonyms(char* word)
+{
+    // TODO
+}
+
+/** Allocates a new Dnode object in memory, with all its attributes set to `0`.
+ *
+ * \returns A new, freshly allocated Dnode object.
+ */
 extern Dnode* 
 Dnode_new()
 {
     return calloc(1, sizeof(Dnode));
 }
 
+/** Prints the dictionary on the standard output.
+ *
+ * \param tree the dictionary to print.
+ */
 extern void
 Dnode_print(Dnode* tree)
 {
@@ -78,7 +109,6 @@ Dnode_print(Dnode* tree)
     {
         if(tree->children[i] != NULL)
         {
-            printf("\t");
             Dnode_print(tree->children[i]);
         }
     }

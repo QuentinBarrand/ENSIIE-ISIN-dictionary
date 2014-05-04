@@ -185,10 +185,7 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
         }
     }
 
-    #ifdef DEBUG
-    Dnode_print(dictionary);
-    #endif
-
+    fclose(stream);
 
     return TRUE;
 }
@@ -294,6 +291,13 @@ Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
     return TRUE;
 }
 
+/** Triggers actions requested by the configuration/
+ *
+ * \param config the application's confiuration.
+ * \param dictionary an initialized Dnode dictionary.
+ *
+ * \returns `0` if there was an error, else `1`.
+ */
 extern int
 Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
 {
@@ -320,6 +324,12 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
         ! Ddictionary_readCommands(config))
     {
         return FALSE;
+    }
+
+    if(config->p_option)
+    {
+        printf("Affichage de la structure de données :");
+        Dnode_print(dictionary);
     }
 
     return TRUE;

@@ -31,5 +31,8 @@ int main(int argc, char** argv)
     // Free the config
     Dconfig_free(config);
 
+    // Free the dictionary
+    Dnode_free(dictionary);
+
     return 0;
 }
