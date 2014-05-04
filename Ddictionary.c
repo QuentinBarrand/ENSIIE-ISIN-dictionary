@@ -56,8 +56,8 @@ Ddictionary_readCommands(Dconfig* config)
     if((stream = fopen(config->commandsPath, "r")) == NULL)
     {
         fprintf(stderr, "%s : Impossible d'ouvrir en lecture le fichier de "
-            " définitions %s. Vérifiez que le fichier existe et réessayez."
-            "\n", config->execName, config->definitionsPath);
+            " commandes %s. Vérifiez que le fichier existe et réessayez."
+            "\n", config->execName, config->commandsPath);
 
         return FALSE;        
     }
@@ -129,6 +129,14 @@ Ddictionary_readCommands(Dconfig* config)
 static int
 Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
 {
+    FILE* stream;
+
+    char buffer[MAX_WORD_SIZE],
+        tempBase[MAX_WORD_SIZE],
+        tempSynonym[MAX_WORD_SIZE];
+
+    int nbBases, nbSynonyms, i;
+
     // Check if config->definitionsPath is not NULL
     if(config->definitionsPath == NULL)
     {
@@ -140,7 +148,48 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
         return FALSE;
     }
 
-    // TODO
+    // Open a file descriptor
+    if((stream = fopen(config->definitionsPath, "r")) == NULL)
+    {
+        fprintf(stderr, "%s : Impossible d'ouvrir en lecture le fichier de "
+            " définitions %s. Vérifiez que le fichier existe et réessayez."
+            "\n", config->execName, config->definitionsPath);
+
+        return FALSE;        
+    }
+
+    // Read a base and two integers
+    while(fscanf(stream, "%s %d %d", buffer, &nbBases, &nbSynonyms) != EOF)
+    {
+        Dnode_getOrAddWord(dictionary, buffer);
+
+        // tempBases = malloc(nbBases * sizeof(char*));
+        // tempSynonyms = malloc(nbSynonyms * sizeof(char*));
+
+        for(i = 0; i < nbBases; i++)
+        {
+            fscanf(stream, "%s", tempBase);
+
+            Dnode_getOrAddWord(dictionary, tempBase);
+            // Dnode_addBaseToDerivative(dictionary, buffer, tempBase);
+            // Dnode_addDerivativeToBase(dictionary, tempBase, buffer);
+        }
+
+        for(i = 0; i < nbSynonyms; i++)
+        {
+            fscanf(stream, "%s", tempSynonym);
+
+            Dnode_getOrAddWord(dictionary, tempSynonym);
+            // tempSynonyms[i] = malloc(MAX_WORD_SIZE * sizeof(char));
+            // fscanf(stream, "%s", tempSynonyms[i]);
+        }
+    }
+
+    #ifdef DEBUG
+    Dnode_print(dictionary);
+    #endif
+
+
     return TRUE;
 }
 
@@ -267,7 +316,8 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
     }
 
     // Import the commands file
-    if(! Ddictionary_readCommands(config))
+    if(config->commandsPath != NULL &&
+        ! Ddictionary_readCommands(config))
     {
         return FALSE;
     }

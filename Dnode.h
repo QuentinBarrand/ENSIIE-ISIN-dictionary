@@ -1,6 +1,7 @@
 #ifndef DNODE_H
 #define DNODE_H
 
+
 /** Project's subject allows us to set the word's maximum length. */
 #define MAX_WORD_SIZE 20
 
@@ -35,20 +36,26 @@ typedef struct _Dnode {
 } Dnode;
 
 
-extern Dnode* 
-Dnode_new();
-
-extern Dnode* 
-Dnode_getOrAdd(char*);
+extern void 
+Dnode_addBaseToDerivative(Dnode*, char*, char*);
 
 extern void 
-Dnode_addDerive(Dnode*, char*, char*);
+Dnode_addDerivativeToBase(Dnode*, char*, char*);
 
 extern void 
 Dnode_addSynonym(Dnode*, char*, char*);
 
 extern void 
 Dnode_free(Dnode*);
+
+extern Dnode* 
+Dnode_getOrAddWord(Dnode*, char*);
+
+extern Dnode* 
+Dnode_new();
+
+extern void 
+Dnode_print(Dnode*);
 
 
 #endif
