@@ -48,7 +48,7 @@ Ddictionary_help(char* execName)
 static int
 Ddictionary_readCommands(Dconfig* config)
 {
-    int i;
+    int i, j;
     char c;
 
     FILE* stream;
@@ -93,7 +93,37 @@ Ddictionary_readCommands(Dconfig* config)
 
     fclose(stream);
 
-    return FALSE;
+    // Check if all the commands look like actual ones
+    for(i = 0; i < config->commandsNb; i++)
+    {
+        if(strncmp(config->commands[i], "base ", 5) &&
+            strncmp(config->commands[i], "deri ", 5) &&
+            strncmp(config->commands[i], "syno ", 5) &&
+            strncmp(config->commands[i], "info ", 5) &&
+            strncmp(config->commands[i], "BASE ", 5) &&
+            strncmp(config->commands[i], "DERI ", 5) &&
+            strncmp(config->commands[i], "SYNO ", 5) &&
+            strncmp(config->commands[i], "INFO ", 5))
+        {
+            fprintf(stderr, "%s : commande non reconnue dans le fichier "
+                "de commandes %s ligne %d : \"%s\" - ignorée"
+                "\n", config->execName, config->commandsPath, i + 1,
+                config->commands[i]);
+
+            // Remove the item from the array
+            free(config->commands[i]);
+            
+            for(j = i; j < config->commandsNb - 1; j++)
+            {
+                config->commands[j] = config->commands[j + 1];
+            }
+
+            config->commandsNb--;
+            i--;
+        }
+    }
+
+    return TRUE;
 }
 
 static int
