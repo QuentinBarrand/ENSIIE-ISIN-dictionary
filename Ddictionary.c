@@ -161,27 +161,22 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     // Read a base and two integers
     while(fscanf(stream, "%s %d %d", buffer, &nbBases, &nbSynonyms) != EOF)
     {
+        // First, add the base to the dictionary
         Dnode_getOrAddWord(dictionary, buffer);
-
-        // tempBases = malloc(nbBases * sizeof(char*));
-        // tempSynonyms = malloc(nbSynonyms * sizeof(char*));
 
         for(i = 0; i < nbBases; i++)
         {
             fscanf(stream, "%s", tempBase);
 
-            Dnode_getOrAddWord(dictionary, tempBase);
-            // Dnode_addBaseToDerivative(dictionary, buffer, tempBase);
-            // Dnode_addDerivativeToBase(dictionary, tempBase, buffer);
+            Dnode_addBaseToDerivative(dictionary, buffer, tempBase);
+            Dnode_addDerivativeToBase(dictionary, tempBase, buffer);
         }
 
         for(i = 0; i < nbSynonyms; i++)
         {
             fscanf(stream, "%s", tempSynonym);
-
-            Dnode_getOrAddWord(dictionary, tempSynonym);
-            // tempSynonyms[i] = malloc(MAX_WORD_SIZE * sizeof(char));
-            // fscanf(stream, "%s", tempSynonyms[i]);
+            
+            Dnode_addSynonym(dictionary, buffer, tempSynonym);
         }
     }
 
@@ -328,7 +323,7 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
 
     if(config->p_option)
     {
-        printf("Affichage de la structure de données :");
+        printf("Affichage de la structure de données :\n");
         Dnode_print(dictionary);
     }
 

@@ -22,11 +22,19 @@ Dnode_addDerivativeToBase(Dnode* tree, char* base, char* derivative)
 }
 
 extern void 
-Dnode_addSynonym(Dnode* tree, char* base, char* derive)
+Dnode_addSynonym(Dnode* tree, char* base, char* synonym)
 {
+    Dnode* base_node = Dnode_getOrAddWord(tree, base);
+    Dnode* synonym_node = Dnode_getOrAddWord(tree, synonym);
+
     // TODO
 }
 
+/** Frees recursively a Dnode dictionary and all of its dynamically allocated 
+ * attributes.
+ *
+ * \param tree The Dnode dictionary to be freed.
+ */
 extern void 
 Dnode_free(Dnode* tree)
 {
@@ -51,6 +59,14 @@ Dnode_getBases(char* word)
     // TODO
 }
 
+/** Gets the Dnode object for a given word in the given dictionary, or creates
+ * it if it does not exist yet.
+ *
+ * \param tree the dictionary to look into.
+ * \param word the word to look for in the give dictionary.
+ *
+ * \returns A pointer to the Dnode object that contains the queried word.
+ */
 extern Dnode*
 Dnode_getOrAddWord(Dnode* tree, char* word)
 {
@@ -74,6 +90,11 @@ Dnode_getOrAddWord(Dnode* tree, char* word)
     }
 
     strncpy(currentNode->word, word, i);
+
+    if(strcmp(currentNode->word, word) == 0)
+    {
+        currentNode->isWord = 1;
+    }
 
     return currentNode;
 }
@@ -103,7 +124,10 @@ Dnode_print(Dnode* tree)
 {
     int i;
 
-    printf("%s\n", tree->word);
+    if(tree->isWord)
+    {
+        printf("%s\n", tree->word);
+    }
 
     for(i = 0; i < 26; i++)
     {

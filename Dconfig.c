@@ -18,7 +18,7 @@ Dconfig_new()
     return calloc(1, sizeof(Dconfig));
 }
 
-/** Frees a Dconfig object and of of its dynamically allocated attributes.
+/** Frees a Dconfig object and all of its dynamically allocated attributes.
  *
  * \param config The Dconfig object to be freed.
  */

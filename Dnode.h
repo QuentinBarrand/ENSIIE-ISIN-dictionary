@@ -26,11 +26,15 @@ typedef struct _Dnode {
     /** The actual dictionary word member that's contained into the Dnode. */
     char word[MAX_WORD_SIZE];
 
+    /** Boolean. Value is `0` if the node does not contain a word, else `1`. */
+    char isWord;
+
     /** This is a 26-ary tree, one children for each one of the alphabet 
      * letter.
      */
     struct _Dnode* children[26];
 
+    struct _DnodeList* bases;
     struct _DnodeList* derivatives;
     struct _DnodeList* synonyms;
 } Dnode;
