@@ -21,6 +21,9 @@ typedef struct _DnodeList
 extern void
 DnodeList_add(DnodeList**, Dnode*);
 
+extern int
+DnodeList_count(DnodeList*);
+
 extern void
 DnodeList_free(DnodeList*);
 

@@ -14,14 +14,28 @@
 extern void
 DnodeList_add(DnodeList** list, Dnode* node)
 {
-    DnodeList* oldList = *list;
-
     DnodeList* newLink; 
     newLink = malloc(sizeof(DnodeList));
-    newLink->node = node;
-    newLink->next = oldList;
 
-    list = &newLink;
+    newLink->node = node;
+    newLink->next = *list;
+
+    *list = newLink;
+}
+
+extern int
+DnodeList_count(DnodeList* list)
+{
+    int i;
+    i = 0;
+
+    while(list != NULL && list->next != NULL)
+    {
+        i++;
+        list = list->next;
+    }
+
+    return i;
 }
 
 /** Frees recursively a DnodeList linked list.
@@ -31,7 +45,7 @@ DnodeList_add(DnodeList** list, Dnode* node)
 extern void
 DnodeList_free(DnodeList* list)
 {
-    if(list)
+    if(list != NULL)
     {
         if(list->next != NULL)
         {

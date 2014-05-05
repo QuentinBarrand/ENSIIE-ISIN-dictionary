@@ -28,7 +28,8 @@ Dnode_addSynonym(Dnode* tree, char* base, char* synonym)
     Dnode* base_node = Dnode_getOrAddWord(tree, base);
     Dnode* synonym_node = Dnode_getOrAddWord(tree, synonym);
 
-    // TODO
+    DnodeList_add(&base_node->synonyms, synonym_node);
+    DnodeList_add(&synonym_node->synonyms, base_node);
 }
 
 /** Frees recursively a Dnode dictionary and all of its dynamically allocated 
@@ -104,9 +105,18 @@ Dnode_getOrAddWord(Dnode* tree, char* word)
 }
 
 extern char**
-Dnode_getSynonyms(char* word)
+Dnode_getSynonyms(Dnode* tree, char* word)
 {
-    // TODO
+    int synonymsNb;
+
+    Dnode* word_node;
+    word_node = Dnode_getOrAddWord(tree, word);
+    
+    synonymsNb = DnodeList_count(word_node->synonyms);
+
+    #ifdef DEBUG
+    printf("%d\n", synonymsNb);
+    #endif
 }
 
 /** Allocates a new Dnode object in memory, with all its attributes set to `0`.
@@ -131,6 +141,10 @@ Dnode_print(Dnode* tree)
     if(tree->isWord)
     {
         printf("%s\n", tree->word);
+        // #ifdef DEBUG
+        // printf("Synonyms : ");
+        // Dnode_getSynonyms(tree  , tree->word);
+        // #endif
     }
 
     for(i = 0; i < 26; i++)

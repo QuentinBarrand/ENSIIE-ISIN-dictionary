@@ -333,5 +333,46 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
 extern void
 Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
 {
-    // TODO
+    char input[30];
+
+    while(TRUE)
+    {
+        printf("Entrez une commande (BASE, DERI, SYNO, INFO) ou q pour quitter"
+        " : ");
+        fgets(input, 30, stdin);
+
+        // Remove newline ('\n') character
+        input[strlen(input) - 1] = '\0';
+
+        if(strlen(input) == 1 && input[0] == 'q')
+        {
+            return TRUE;
+        }
+
+        if(strlen(input) > 5)
+        {
+            if(strncmp(input, "BASE ", 5) || strncmp(input, "base ", 5))
+            {
+                // Process BASE
+            }
+
+            if(strncmp(input, "DERI ", 5) || strncmp(input, "deri ", 5))
+            {
+                // Process DERI                
+            }
+
+            if(strncmp(input, "SYNO ", 5) || strncmp(input, "syno ", 5))
+            {
+                // Process SYNO
+            }
+
+            if(strncmp(input, "INFO ", 5) || strncmp(input, "info ", 5))
+            {
+                // Process INFO
+            }
+        }
+
+        // If we're here, the command isn't properly formatted
+        fprintf(stderr, "Commande non reconnue.\n");
+    }
 }

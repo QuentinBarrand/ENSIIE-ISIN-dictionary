@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     }
 
     // Run the interactive mode
-
+    Ddictionary_runInteractive(config, dictionary);
 
     // Free the config
     Dconfig_free(config);
