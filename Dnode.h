@@ -1,25 +1,12 @@
 #ifndef DNODE_H
 #define DNODE_H
 
+#include "DnodeList.h"
+
 
 /** Project's subject allows us to set the word's maximum length. */
 #define MAX_WORD_SIZE 20
 
-
-struct _DnodeList;
-struct _Dnode;
-
-/** Linked list allowing us to represent a one-to-many relationship between
- * a base Dnode and its derivatives and synonyms.
- */
-typedef struct _DnodeList
-{
-    /** The next element in the linked list. */
-    struct _DnodeList* next;
-
-    /** The Dnode element pointed by this linked list element. */
-    struct _Dnode* node;
-} DnodeList;
 
 /** 26-ary tree representing the dictionary. */
 typedef struct _Dnode {
