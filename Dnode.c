@@ -49,7 +49,10 @@ Dnode_free(Dnode* tree)
         }
     }
 
-    // TODO : Free all linked lists
+    // Free all linked lists
+    DnodeList_free(tree->bases);
+    DnodeList_free(tree->derivatives);
+    DnodeList_free(tree->synonyms);
 
     free(tree);
 }

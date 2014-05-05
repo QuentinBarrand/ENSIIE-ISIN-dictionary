@@ -19,9 +19,9 @@ typedef struct _DnodeList
 } DnodeList;
 
 extern void
-DnodeList_Add(DnodeList**, Dnode*);
+DnodeList_add(DnodeList**, Dnode*);
 
 extern void
-DnodeList_Free(DnodeList*);
+DnodeList_free(DnodeList*);
 
 #endif
