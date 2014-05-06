@@ -19,10 +19,10 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-    // Trigger actions required by configuration and get the dictionary
     Dnode* dictionary;
     dictionary = Dnode_new();
 
+    // Trigger actions required by configuration and initialize the dictionary
     if(Ddictionary_processArgs(config, dictionary))
     {
         // Run the interactive mode

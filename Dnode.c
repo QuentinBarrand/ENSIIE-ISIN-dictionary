@@ -26,13 +26,13 @@ Dnode_free(Dnode* node, void (*freeElement)(void*))
     
     for(i = 0; i < 26; i++)
     {
-        if(node->children[i] != NULL)
+        if(node->children[i])
         {
             Dnode_free(node->children[i], freeElement);
         }
     }
     
-    if(node->element != NULL)
+    if(node->element)
     {
         freeElement(node->element);
     }

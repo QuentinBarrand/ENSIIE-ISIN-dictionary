@@ -31,9 +31,9 @@ DwordList_add(DwordList** list, Dword* word)
 extern void
 DwordList_free(DwordList* list)
 {
-    if(list != NULL)
+    if(list)
     {
-        if(list->next != NULL)
+        if(list->next)
         {
             DwordList_free(list->next);
         }
@@ -49,9 +49,9 @@ DwordList_free(DwordList* list)
 extern void
 DwordList_print(DwordList* list)
 {
-    if(list != NULL)
+    if(list)
     {
-        if(list->next != NULL)
+        if(list->next)
         {
             DwordList_print(list->next);
         }

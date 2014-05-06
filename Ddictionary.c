@@ -60,7 +60,7 @@ Ddictionary_getOrAddWord(Dnode* tree, char* word)
 
         strncpy(tempString, word, i);
         
-        if(currentNode->children[c - 'a'] == NULL)
+        if(! currentNode->children[c - 'a'])
         {
             currentNode->children[c - 'a'] = Dnode_new();
             currentNode->children[c - 'a']->element = Dword_new(tempString);
@@ -123,7 +123,7 @@ Ddictionary_print(Dnode* tree)
 
     for(i = 0; i < 26; i++)
     {
-        if(tree->children[i] != NULL)
+        if(tree->children[i])
         {
             Ddictionary_print(tree->children[i]);
         }
@@ -143,7 +143,7 @@ Ddictionary_readCommands(Dconfig* config)
 
     FILE* stream;
 
-    if((stream = fopen(config->commandsPath, "r")) == NULL)
+    if(! (stream = fopen(config->commandsPath, "r")))
     {
         fprintf(stderr, "%s : Impossible d'ouvrir en lecture le fichier de "
             " commandes %s. Vérifiez que le fichier existe et réessayez."
@@ -235,7 +235,7 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     int nbBases, nbSynonyms, i;
 
     // Check if config->definitionsPath is not NULL
-    if(config->definitionsPath == NULL)
+    if(! config->definitionsPath)
     {
         fprintf(stderr, "%s : Merci: de fournir un fichier dans lequel lire "
             " les définitions de bases et de synonymes."
@@ -246,7 +246,7 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     }
 
     // Open a file descriptor
-    if((stream = fopen(config->definitionsPath, "r")) == NULL)
+    if(! (stream = fopen(config->definitionsPath, "r")))
     {
         fprintf(stderr, "%s : Impossible d'ouvrir en lecture le fichier de "
             "définitions %s. Vérifiez que le fichier existe et réessayez."
@@ -331,8 +331,6 @@ Ddictionary_runCommand(char* command, Dnode* dictionary)
 
         printf("\n");
     }
-
-    free(word);
 }
 
 /*******************************************************************************
@@ -384,7 +382,7 @@ Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
         if(currentArg[0] != '-')
         {
             // If this is the first time we are seing a dash-less argument
-            if(config->definitionsPath == NULL)
+            if(! config->definitionsPath)
             {
                 config->definitionsPath = currentArg;
             }
@@ -465,7 +463,7 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
         Ddictionary_help(config->execName);
 
         // Let's stop here if nothing else was supplied
-        if(config->definitionsPath == NULL)
+        if(! config->definitionsPath)
         {
             return FALSE;
         }
@@ -478,7 +476,7 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
     }
 
     // Import the commands file
-    if(config->commandsPath != NULL &&
+    if(config->commandsPath &&
         ! Ddictionary_readCommands(config))
     {
         return FALSE;
@@ -523,7 +521,7 @@ Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
         input[strlen(input) - 1] = '\0';
 
         // Want to quit ?
-        if(strlen(input) == 1 && input[0] == 'q')
+        if(input[0] == 'q' && input[1] == '\0')
         {
             return;
         }
