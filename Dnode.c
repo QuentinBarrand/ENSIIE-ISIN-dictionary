@@ -58,12 +58,6 @@ Dnode_free(Dnode* tree)
     free(tree);
 }
 
-extern char**
-Dnode_getBases(char* word)
-{
-    // TODO
-}
-
 /** Gets the Dnode object for a given word in the given dictionary, or creates
  * it if it does not exist yet.
  *

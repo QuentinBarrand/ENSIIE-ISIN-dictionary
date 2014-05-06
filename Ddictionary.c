@@ -23,13 +23,17 @@ Ddictionary_readCommands(Dconfig*);
 static int
 Ddictionary_readDefinitions(Dconfig*, Dnode*);
 
-static int
+static void
 Ddictionary_runCommand(char*, Dnode*);
 
 /*******************************************************************************
  * Static functions
  */
 
+/** Displays the application's help.
+ *
+ * \param execName the executable's name that was used to start the program.
+ */
 static void 
 Ddictionary_help(char* execName)
 {
@@ -49,6 +53,11 @@ Ddictionary_help(char* execName)
         "\n", execName);
 }
 
+/** Reads the commands written beforehand in the commands file.
+ * Ignores commands that are not correctly formatted.
+ *
+ * \param config the application's configuration.
+ */
 static int
 Ddictionary_readCommands(Dconfig* config)
 {
@@ -130,6 +139,13 @@ Ddictionary_readCommands(Dconfig* config)
     return TRUE;
 }
 
+/** Reads the dictionary's configuration file.
+ *
+ * \param config the application's configuration.
+ * \param dictionary the Dnode dictionary to be populated.
+ *
+ * \returns `0` if an error occured, else `1`.
+ */
 static int
 Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
 {
@@ -189,7 +205,12 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     return TRUE;
 }
 
-static int
+/** Runs a command in a specified dictionary.
+ *
+ * \param command the command to be executed.
+ * \param dictionary the dictionary in which the command should be executed.
+ */
+static void
 Ddictionary_runCommand(char* command, Dnode* dictionary)
 {
     char* word;
@@ -203,36 +224,35 @@ Ddictionary_runCommand(char* command, Dnode* dictionary)
         {
             printf("Bases du mot \"%s\" :\n", word);
             Dnode_printBases(dictionary, word);
-            return TRUE;
         }
-
-        if(strncmp(command, "DERI ", 5) == 0 ||
+        else if(strncmp(command, "DERI ", 5) == 0 ||
             strncmp(command, "deri ", 5) == 0)
         {
-            printf("Dérivés du mot %s :\n", word);
+            printf("Dérivés du mot \"%s\" :\n", word);
             Dnode_printDerivatives(dictionary, word);
-            return TRUE;
         }
-
-        if(strncmp(command, "SYNO ", 5) == 0 ||
+        else if(strncmp(command, "SYNO ", 5) == 0 ||
             strncmp(command, "syno ", 5) == 0)
         {
-            printf("Synonymes du mot %s :\n", word);
+            printf("Synonymes du mot \"%s\" :\n", word);
             Dnode_printSynonyms(dictionary, word);
-            return TRUE;
         }
-
-        if(strncmp(command, "INFO ", 5) == 0 ||
+        else if(strncmp(command, "INFO ", 5) == 0 ||
             strncmp(command, "info ", 5) == 0)
         {
             // Process INFO
             // TODO
-            return TRUE;
         }
+        else
+        {
+            // If we're here, the command is invalid
+            fprintf(stderr, "Commande non reconnue.\n ");
+        }
+
+        printf("\n");
     }
 
-    // If we're here, the command is invalid
-    fprintf(stderr, "Commande non reconnue.\n");
+    free(word);
 }
 
 /*******************************************************************************
@@ -338,7 +358,7 @@ Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
 
 /** Triggers actions requested by the configuration/
  *
- * \param config the application's confiuration.
+ * \param config the application's configuration.
  * \param dictionary an initialized Dnode dictionary.
  *
  * \returns `0` if there was an error, else `1`.
@@ -346,6 +366,8 @@ Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
 extern int
 Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
 {
+    int i;
+
     // Help ?
     if(config->h_option)
     {
@@ -371,20 +393,33 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
         return FALSE;
     }
 
+    // Print data structure if needed
     if(config->p_option)
     {
         printf("Affichage de la structure de données :\n");
         Dnode_print(dictionary);
     }
 
+    // Run all the commands prepared in the commands file
+    for(i = 0; i < config->commandsNb; i++)
+    {
+        printf("\nCommande : %s\n", config->commands[i]);
+        Ddictionary_runCommand(config->commands[i], dictionary);
+    }
+
     return TRUE;
 }
 
+/** Runs an interactive session. Starts an infinite loop waiting for commands
+ * from the user.
+ *
+ * \param config the application's configuration.
+ * \param dictionary the dictionary in which commands should be executed.
+ */
 extern void
 Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
 {
     char input[30];
-    char* word;
 
     while(TRUE)
     {
@@ -398,7 +433,7 @@ Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
         // Want to quit ?
         if(strlen(input) == 1 && input[0] == 'q')
         {
-            return TRUE;
+            return;
         }
 
         Ddictionary_runCommand(input, dictionary);

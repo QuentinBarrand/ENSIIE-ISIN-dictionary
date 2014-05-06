@@ -48,5 +48,14 @@ Dnode_new();
 extern void 
 Dnode_print(Dnode*);
 
+extern void
+Dnode_printBases(Dnode*, char*);
+
+extern void
+Dnode_printDerivatives(Dnode*, char*);
+
+extern void
+Dnode_printSynonyms(Dnode*, char*);
+
 
 #endif
