@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     Dconfig_free(config);
 
     // Free the dictionary
-    Dnode_free(dictionary);
+    Ddictionary_free(dictionary);
 
     return 0;
 }

@@ -6,9 +6,8 @@
 
 #include "Dconfig.h"
 #include "Dnode.h"
-#include "DnodeList.h"
 #include "Dutils.h"
-
+#include "Dword.h"
 
 /*******************************************************************************
  * Static declarations
@@ -16,6 +15,12 @@
 
 static void
 Ddictionary_help(char*);
+
+static Dword*
+Ddictionary_getOrAddWord(Dnode*, char*);
+
+static void
+Ddictionary_print(Dnode*);
 
 static int
 Ddictionary_readCommands(Dconfig*);
@@ -29,6 +34,51 @@ Ddictionary_runCommand(char*, Dnode*);
 /*******************************************************************************
  * Static functions
  */
+
+/** Gets the Dnode object for a given word in the given dictionary, or creates
+ * it if it does not exist yet.
+ *
+ * \param tree the dictionary to look into.
+ * \param word the word to look for in the give dictionary.
+ *
+ * \returns A pointer to the Dnode object that contains the queried word.
+ */
+static Dword*
+Ddictionary_getOrAddWord(Dnode* tree, char* word)
+{
+    char tempString[MAX_WORD_SIZE];
+
+    char c;
+    uint i;
+
+    Dnode* currentNode;
+    currentNode = tree;
+
+    for(i = 0; i < strlen(word); i++)
+    {
+        c = word[i];
+
+        strncpy(tempString, word, i);
+        
+        if(currentNode->children[c - 'a'] == NULL)
+        {
+            currentNode->children[c - 'a'] = Dnode_new();
+            currentNode->children[c - 'a']->element = Dword_new(tempString);
+        }
+
+        currentNode = currentNode->children[c - 'a'];
+        // strncpy(currentNode->word, word, i);
+    }
+
+    // strncpy(currentNode->word, word, i);
+
+    if(strcmp(((Dword*)currentNode->element)->word, word) == 0)
+    {
+        ((Dword*)currentNode->element)->isWord = 1;
+    }
+
+    return ((Dword*)currentNode->element);
+}
 
 /** Displays the application's help.
  *
@@ -51,6 +101,33 @@ Ddictionary_help(char* execName)
         "\n<definitions>"
         "\n\tFichier de définitions de bases et de synonymes"
         "\n", execName);
+}
+
+/** Prints the dictionary on the standard output.
+ *
+ * \param tree the dictionary to print.
+ */
+static void
+Ddictionary_print(Dnode* tree)
+{
+    int i;
+
+    if(((Dword*)tree->element)->isWord)
+    {
+        printf("%s\n", ((Dword*)tree->element)->word);
+        // #ifdef DEBUG
+        // printf("Synonyms : ");
+        // Dnode_getSynonyms(tree  , tree->word);
+        // #endif
+    }
+
+    for(i = 0; i < 26; i++)
+    {
+        if(tree->children[i] != NULL)
+        {
+            Ddictionary_print(tree->children[i]);
+        }
+    }
 }
 
 /** Reads the commands written beforehand in the commands file.
@@ -182,21 +259,21 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     while(fscanf(stream, "%s %d %d", buffer, &nbBases, &nbSynonyms) != EOF)
     {
         // First, add the base to the dictionary
-        Dnode_getOrAddWord(dictionary, buffer);
+        Ddictionary_getOrAddWord(dictionary, buffer);
 
         for(i = 0; i < nbBases; i++)
         {
             fscanf(stream, "%s", tempBase);
 
-            Dnode_addBaseToDerivative(dictionary, buffer, tempBase);
-            Dnode_addDerivativeToBase(dictionary, tempBase, buffer);
+            // Dnode_addBaseToDerivative(dictionary, buffer, tempBase);
+            // Dnode_addDerivativeToBase(dictionary, tempBase, buffer);
         }
 
         for(i = 0; i < nbSynonyms; i++)
         {
             fscanf(stream, "%s", tempSynonym);
             
-            Dnode_addSynonym(dictionary, buffer, tempSynonym);
+            // Dnode_addSynonym(dictionary, buffer, tempSynonym);
         }
     }
 
@@ -213,8 +290,11 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
 static void
 Ddictionary_runCommand(char* command, Dnode* dictionary)
 {
-    char* word;
-    word = strndup(command + 5, 20);
+    char* searchedWord;
+    searchedWord = strndup(command + 5, 20);
+
+    Dword* word;
+    word = Ddictionary_getOrAddWord(dictionary, searchedWord);
 
     // Looks like a valid command
     if(strlen(command) > 5)
@@ -222,20 +302,20 @@ Ddictionary_runCommand(char* command, Dnode* dictionary)
         if(strncmp(command, "BASE ", 5) == 0 ||
             strncmp(command, "base ", 5) == 0)
         {
-            printf("Bases du mot \"%s\" :\n", word);
-            Dnode_printBases(dictionary, word);
+            printf("Bases du mot \"%s\" :\n", searchedWord);
+            Dword_printBases(word);
         }
         else if(strncmp(command, "DERI ", 5) == 0 ||
             strncmp(command, "deri ", 5) == 0)
         {
-            printf("Dérivés du mot \"%s\" :\n", word);
-            Dnode_printDerivatives(dictionary, word);
+            printf("Dérivés du mot \"%s\" :\n", searchedWord);
+            Dword_printDerivatives(word);
         }
         else if(strncmp(command, "SYNO ", 5) == 0 ||
             strncmp(command, "syno ", 5) == 0)
         {
-            printf("Synonymes du mot \"%s\" :\n", word);
-            Dnode_printSynonyms(dictionary, word);
+            printf("Synonymes du mot \"%s\" :\n", searchedWord);
+            Dword_printSynonyms(word);
         }
         else if(strncmp(command, "INFO ", 5) == 0 ||
             strncmp(command, "info ", 5) == 0)
@@ -258,6 +338,33 @@ Ddictionary_runCommand(char* command, Dnode* dictionary)
 /*******************************************************************************
  * Extern functions
  */
+
+/** Frees recursively a Dnode dictionary and all of its dynamically allocated 
+ * attributes.
+ *
+ * \param tree The Dnode dictionary to be freed.
+ */
+extern void 
+Ddictionary_free(Dnode* tree)
+{
+    Dnode_free(tree, Dword_free);
+    // int i;
+
+    // for(i = 0; i < 26; i++)
+    // {
+    //     if(tree->children[i] != NULL)
+    //     {
+    //         if(tree->element != NULL)
+    //         {
+    //             Dword_free(tree->element);
+    //         }
+
+    //         Dnode_free(tree->children[i]);
+    //     }
+    // }
+
+    // free(tree);
+}
 
 /** Parses the program's arguments and populates a Dconfig object.
  *
@@ -397,7 +504,8 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
     if(config->p_option)
     {
         printf("Affichage de la structure de données :\n");
-        Dnode_print(dictionary);
+        Ddictionary_print(dictionary);
+        printf("\n");
     }
 
     // Run all the commands prepared in the commands file

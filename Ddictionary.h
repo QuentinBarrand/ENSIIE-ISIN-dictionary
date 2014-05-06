@@ -5,6 +5,8 @@
 #include "Dconfig.h"
 #include "Dnode.h"
 
+extern void 
+Ddictionary_free(Dnode*);
 
 extern int 
 Ddictionary_parseArgs(Dconfig*, int, char**);

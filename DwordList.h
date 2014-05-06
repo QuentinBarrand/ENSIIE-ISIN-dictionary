@@ -2,32 +2,31 @@
 #define DNODELIST_H
 
 
-#include <stdio.h>
+#include "Dword.h"
 
-#include "Dnode.h"
 
-typedef struct _Dnode Dnode;
+typedef struct _Dword Dword;
 
 
 /** Linked list allowing us to represent a one-to-many relationship between
  * a base Dnode and its derivatives and synonyms.
  */
-typedef struct _DnodeList
+typedef struct _DwordList
 {
     /** The next element in the linked list. */
-    struct _DnodeList* next;
+    struct _DwordList* next;
 
     /** The Dnode element pointed by this linked list element. */
-    struct _Dnode* node;
-} DnodeList;
+    Dword* word;
+} DwordList;
 
 extern void
-DnodeList_add(DnodeList**, Dnode*);
+DwordList_add(DwordList**, Dword*);
 
 extern void
-DnodeList_free(DnodeList*);
+DwordList_free(DwordList*);
 
 extern void
-DnodeList_print(DnodeList* list);
+DwordList_print(DwordList*);
 
 #endif

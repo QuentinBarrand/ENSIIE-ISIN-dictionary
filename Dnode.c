@@ -3,100 +3,11 @@
 #include <string.h>
 
 #include "Dnode.h"
-#include "DnodeList.h"
 
 
 /*******************************************************************************
  * Extern functions
  */
-
-extern void 
-Dnode_addBaseToDerivative(Dnode* tree, char* derivative, char* base)
-{
-    // TODO
-}
-
-extern void 
-Dnode_addDerivativeToBase(Dnode* tree, char* base, char* derivative)
-{
-    // TODO
-}
-
-extern void 
-Dnode_addSynonym(Dnode* tree, char* base, char* synonym)
-{
-    Dnode* base_node = Dnode_getOrAddWord(tree, base);
-    Dnode* synonym_node = Dnode_getOrAddWord(tree, synonym);
-
-    DnodeList_add(&base_node->synonyms, synonym_node);
-    DnodeList_add(&synonym_node->synonyms, base_node);
-}
-
-/** Frees recursively a Dnode dictionary and all of its dynamically allocated 
- * attributes.
- *
- * \param tree The Dnode dictionary to be freed.
- */
-extern void 
-Dnode_free(Dnode* tree)
-{
-    int i;
-
-    for(i = 0; i < 26; i++)
-    {
-        if(tree->children[i] != NULL)
-        {
-            Dnode_free(tree->children[i]);
-        }
-    }
-
-    // Free all linked lists
-    DnodeList_free(tree->bases);
-    DnodeList_free(tree->derivatives);
-    DnodeList_free(tree->synonyms);
-
-    free(tree);
-}
-
-/** Gets the Dnode object for a given word in the given dictionary, or creates
- * it if it does not exist yet.
- *
- * \param tree the dictionary to look into.
- * \param word the word to look for in the give dictionary.
- *
- * \returns A pointer to the Dnode object that contains the queried word.
- */
-extern Dnode*
-Dnode_getOrAddWord(Dnode* tree, char* word)
-{
-    char c;
-    uint i;
-
-    Dnode* currentNode;
-    currentNode = tree;
-
-    for(i = 0; i < strlen(word); i++)
-    {
-        c = word[i];
-        
-        if(currentNode->children[c - 'a'] == NULL)
-        {
-            currentNode->children[c - 'a'] = Dnode_new();
-        }
-
-        currentNode = currentNode->children[c - 'a'];
-        strncpy(currentNode->word, word, i);
-    }
-
-    strncpy(currentNode->word, word, i);
-
-    if(strcmp(currentNode->word, word) == 0)
-    {
-        currentNode->isWord = 1;
-    }
-
-    return currentNode;
-}
 
 /** Allocates a new Dnode object in memory, with all its attributes set to `0`.
  *
@@ -108,56 +19,23 @@ Dnode_new()
     return calloc(1, sizeof(Dnode));
 }
 
-/** Prints the dictionary on the standard output.
- *
- * \param tree the dictionary to print.
- */
 extern void
-Dnode_print(Dnode* tree)
+Dnode_free(Dnode* node, void (*freeElement)(void*))
 {
     int i;
-
-    if(tree->isWord)
-    {
-        printf("%s\n", tree->word);
-        // #ifdef DEBUG
-        // printf("Synonyms : ");
-        // Dnode_getSynonyms(tree  , tree->word);
-        // #endif
-    }
-
+    
     for(i = 0; i < 26; i++)
     {
-        if(tree->children[i] != NULL)
+        if(node->children[i] != NULL)
         {
-            Dnode_print(tree->children[i]);
+            Dnode_free(node->children[i], freeElement);
         }
     }
-}
+    
+    if(node->element != NULL)
+    {
+        freeElement(node->element);
+    }
 
-extern void
-Dnode_printBases(Dnode* tree, char* word)
-{
-    Dnode* word_node;
-    word_node = Dnode_getOrAddWord(tree, word);
-
-    DnodeList_print(word_node->bases);
-}
-
-extern void
-Dnode_printDerivatives(Dnode* tree, char* word)
-{
-    Dnode* word_node;
-    word_node = Dnode_getOrAddWord(tree, word);
-
-    DnodeList_print(word_node->derivatives);
-}
-
-extern void
-Dnode_printSynonyms(Dnode* tree, char* word)
-{
-    Dnode* word_node;
-    word_node = Dnode_getOrAddWord(tree, word);
-
-    DnodeList_print(word_node->synonyms);
+    free(node);
 }
