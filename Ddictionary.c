@@ -290,15 +290,15 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
 static void
 Ddictionary_runCommand(char* command, Dnode* dictionary)
 {
-    char* searchedWord;
-    searchedWord = strndup(command + 5, 20);
-
-    Dword* word;
-    word = Ddictionary_getOrAddWord(dictionary, searchedWord);
-
     // Looks like a valid command
     if(strlen(command) > 5)
     {
+        char* searchedWord;
+        searchedWord = strndup(command + 5, 20);
+
+        Dword* word;
+        word = Ddictionary_getOrAddWord(dictionary, searchedWord);
+
         if(strncmp(command, "BASE ", 5) == 0 ||
             strncmp(command, "base ", 5) == 0)
         {
