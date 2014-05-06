@@ -104,21 +104,6 @@ Dnode_getOrAddWord(Dnode* tree, char* word)
     return currentNode;
 }
 
-extern char**
-Dnode_getSynonyms(Dnode* tree, char* word)
-{
-    int synonymsNb;
-
-    Dnode* word_node;
-    word_node = Dnode_getOrAddWord(tree, word);
-    
-    synonymsNb = DnodeList_count(word_node->synonyms);
-
-    #ifdef DEBUG
-    printf("%d\n", synonymsNb);
-    #endif
-}
-
 /** Allocates a new Dnode object in memory, with all its attributes set to `0`.
  *
  * \returns A new, freshly allocated Dnode object.
@@ -154,4 +139,31 @@ Dnode_print(Dnode* tree)
             Dnode_print(tree->children[i]);
         }
     }
+}
+
+extern void
+Dnode_printBases(Dnode* tree, char* word)
+{
+    Dnode* word_node;
+    word_node = Dnode_getOrAddWord(tree, word);
+
+    DnodeList_print(word_node->bases);
+}
+
+extern void
+Dnode_printDerivatives(Dnode* tree, char* word)
+{
+    Dnode* word_node;
+    word_node = Dnode_getOrAddWord(tree, word);
+
+    DnodeList_print(word_node->derivatives);
+}
+
+extern void
+Dnode_printSynonyms(Dnode* tree, char* word)
+{
+    Dnode* word_node;
+    word_node = Dnode_getOrAddWord(tree, word);
+
+    DnodeList_print(word_node->synonyms);
 }

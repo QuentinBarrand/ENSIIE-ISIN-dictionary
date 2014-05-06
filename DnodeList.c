@@ -23,21 +23,6 @@ DnodeList_add(DnodeList** list, Dnode* node)
     *list = newLink;
 }
 
-extern int
-DnodeList_count(DnodeList* list)
-{
-    int i;
-    i = 0;
-
-    while(list != NULL && list->next != NULL)
-    {
-        i++;
-        list = list->next;
-    }
-
-    return i;
-}
-
 /** Frees recursively a DnodeList linked list.
  *
  * \param list the DnodeList to be freed.
@@ -53,5 +38,23 @@ DnodeList_free(DnodeList* list)
         }
 
         free(list);
+    }
+}
+
+/** Prints the word in the DnodeList object.
+ *
+ * \param list the list containing the Dnodes->word to be printed.
+ */
+extern void
+DnodeList_print(DnodeList* list)
+{
+    if(list != NULL)
+    {
+        if(list->next != NULL)
+        {
+            DnodeList_print(list->next);
+        }
+
+        printf("\t%s\n", list->node->word);
     }
 }

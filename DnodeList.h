@@ -1,6 +1,9 @@
 #ifndef DNODELIST_H
 #define DNODELIST_H
 
+
+#include <stdio.h>
+
 #include "Dnode.h"
 
 typedef struct _Dnode Dnode;

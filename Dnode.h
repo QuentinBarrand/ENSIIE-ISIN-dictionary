@@ -4,7 +4,7 @@
 #include "DnodeList.h"
 
 
-/** Project's subject allows us to set the word's maximum    length. */
+/** Project's subject allows us to set the word's maximum length. */
 #define MAX_WORD_SIZE 20
 
 

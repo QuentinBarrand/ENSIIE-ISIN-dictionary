@@ -6,6 +6,7 @@
 
 #include "Dconfig.h"
 #include "Dnode.h"
+#include "DnodeList.h"
 #include "Dutils.h"
 
 
@@ -21,6 +22,9 @@ Ddictionary_readCommands(Dconfig*);
 
 static int
 Ddictionary_readDefinitions(Dconfig*, Dnode*);
+
+static int
+Ddictionary_runCommand(char*, Dnode*);
 
 /*******************************************************************************
  * Static functions
@@ -185,6 +189,52 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     return TRUE;
 }
 
+static int
+Ddictionary_runCommand(char* command, Dnode* dictionary)
+{
+    char* word;
+    word = strndup(command + 5, 20);
+
+    // Looks like a valid command
+    if(strlen(command) > 5)
+    {
+        if(strncmp(command, "BASE ", 5) == 0 ||
+            strncmp(command, "base ", 5) == 0)
+        {
+            printf("Bases du mot \"%s\" :\n", word);
+            Dnode_printBases(dictionary, word);
+            return TRUE;
+        }
+
+        if(strncmp(command, "DERI ", 5) == 0 ||
+            strncmp(command, "deri ", 5) == 0)
+        {
+            printf("Dérivés du mot %s :\n", word);
+            Dnode_printDerivatives(dictionary, word);
+            return TRUE;
+        }
+
+        if(strncmp(command, "SYNO ", 5) == 0 ||
+            strncmp(command, "syno ", 5) == 0)
+        {
+            printf("Synonymes du mot %s :\n", word);
+            Dnode_printSynonyms(dictionary, word);
+            return TRUE;
+        }
+
+        if(strncmp(command, "INFO ", 5) == 0 ||
+            strncmp(command, "info ", 5) == 0)
+        {
+            // Process INFO
+            // TODO
+            return TRUE;
+        }
+    }
+
+    // If we're here, the command is invalid
+    fprintf(stderr, "Commande non reconnue.\n");
+}
+
 /*******************************************************************************
  * Extern functions
  */
@@ -334,6 +384,7 @@ extern void
 Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
 {
     char input[30];
+    char* word;
 
     while(TRUE)
     {
@@ -344,35 +395,12 @@ Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
         // Remove newline ('\n') character
         input[strlen(input) - 1] = '\0';
 
+        // Want to quit ?
         if(strlen(input) == 1 && input[0] == 'q')
         {
             return TRUE;
         }
 
-        if(strlen(input) > 5)
-        {
-            if(strncmp(input, "BASE ", 5) || strncmp(input, "base ", 5))
-            {
-                // Process BASE
-            }
-
-            if(strncmp(input, "DERI ", 5) || strncmp(input, "deri ", 5))
-            {
-                // Process DERI                
-            }
-
-            if(strncmp(input, "SYNO ", 5) || strncmp(input, "syno ", 5))
-            {
-                // Process SYNO
-            }
-
-            if(strncmp(input, "INFO ", 5) || strncmp(input, "info ", 5))
-            {
-                // Process INFO
-            }
-        }
-
-        // If we're here, the command isn't properly formatted
-        fprintf(stderr, "Commande non reconnue.\n");
+        Ddictionary_runCommand(input, dictionary);
     }
 }
