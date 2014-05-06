@@ -9,7 +9,7 @@
  * Extern functions
  */
 
-/** Allocates a new Dnode object in memory, with all its attributes set to `0`.
+/** Allocates a new Dnode object in memory, and set its attributes to `0`.
  *
  * \returns A new, freshly allocated Dnode object.
  */

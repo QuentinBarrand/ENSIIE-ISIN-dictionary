@@ -249,7 +249,7 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     if((stream = fopen(config->definitionsPath, "r")) == NULL)
     {
         fprintf(stderr, "%s : Impossible d'ouvrir en lecture le fichier de "
-            " définitions %s. Vérifiez que le fichier existe et réessayez."
+            "définitions %s. Vérifiez que le fichier existe et réessayez."
             "\n", config->execName, config->definitionsPath);
 
         return FALSE;        
@@ -348,22 +348,6 @@ extern void
 Ddictionary_free(Dnode* tree)
 {
     Dnode_free(tree, Dword_free);
-    // int i;
-
-    // for(i = 0; i < 26; i++)
-    // {
-    //     if(tree->children[i] != NULL)
-    //     {
-    //         if(tree->element != NULL)
-    //         {
-    //             Dword_free(tree->element);
-    //         }
-
-    //         Dnode_free(tree->children[i]);
-    //     }
-    // }
-
-    // free(tree);
 }
 
 /** Parses the program's arguments and populates a Dconfig object.
