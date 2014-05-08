@@ -10,7 +10,7 @@
  *
  * \param list a pointer to the DwordList to which the new element should be 
  *    appended to.
- * \param node the Dwordthat should be used to create the new DwordList link.
+ * \param word the Dword that should be used to create the new DwordList link.
  */
 extern void
 DwordList_add(DwordList** list, Dword* word)

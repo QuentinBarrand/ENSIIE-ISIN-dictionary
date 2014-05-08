@@ -9,6 +9,11 @@
  * Extern functions
  */
 
+/** Frees the specified Dnode using a specific function for the element member. 
+ *
+ * \param node the Dnode to be recursively freed.
+ * \param freeElement a pointer to the function used to free the element member.
+ */
 extern void
 Dnode_free(Dnode* node, void (*freeElement)(void*))
 {
@@ -26,11 +31,7 @@ Dnode_free(Dnode* node, void (*freeElement)(void*))
     {
         freeElement(node->element);
     }
-
-    #ifdef DEBUG
-    printf("Freeing node\n");
-    #endif
-
+    
     free(node);
 }
 
