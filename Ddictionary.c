@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,49 +36,41 @@ Ddictionary_runCommand(char*, Dnode*);
  * Static functions
  */
 
-/** Gets the Dnode object for a given word in the given dictionary, or creates
+/** Gets the Dword object for a given word in the given dictionary, or creates
  * it if it does not exist yet.
  *
  * \param tree the dictionary to look into.
  * \param word the word to look for in the give dictionary.
  *
- * \returns A pointer to the Dnode object that contains the queried word.
+ * \returns A pointer to the Dword object that contains the queried word.
  */
 static Dword*
 Ddictionary_getOrAddWord(Dnode* tree, char* word)
 {
-    char tempString[MAX_WORD_SIZE];
+    char tempWord[MAX_WORD_SIZE];
+    int c, nbChars;
+    int i;
 
-    char c;
-    uint i;
+    nbChars = strlen(word);
 
-    Dnode* currentNode;
-    currentNode = tree;
-
-    for(i = 0; i < strlen(word); i++)
+    for(i = 0; i < nbChars; i++)
     {
         c = word[i];
 
-        strncpy(tempString, word, i);
-        
-        if(! currentNode->children[c - 'a'])
-        {
-            currentNode->children[c - 'a'] = Dnode_new();
-            currentNode->children[c - 'a']->element = Dword_new(tempString);
+        strncpy(tempWord, word, i + 1);
+        tempWord[i + 1] = '\0';
+
+        if(! tree->children[c - 'a'])
+            tree->children[c - 'a'] = Dnode_new();
+            tree->children[c - 'a']->element = Dword_new(tempWord);
         }
-
-        currentNode = currentNode->children[c - 'a'];
-        // strncpy(currentNode->word, word, i);
+        
+        tree = tree->children[c - 'a'];
     }
+    
+    ((Dword*)tree->element)->isWord = TRUE;
 
-    // strncpy(currentNode->word, word, i);
-
-    if(strcmp(((Dword*)currentNode->element)->word, word) == 0)
-    {
-        ((Dword*)currentNode->element)->isWord = 1;
-    }
-
-    return ((Dword*)currentNode->element);
+    return ((Dword*)tree->element);
 }
 
 /** Displays the application's help.
@@ -112,13 +105,12 @@ Ddictionary_print(Dnode* tree)
 {
     int i;
 
-    if(((Dword*)tree->element)->isWord)
+    if((Dword*)tree->element)
     {
-        printf("%s\n", ((Dword*)tree->element)->word);
-        // #ifdef DEBUG
-        // printf("Synonyms : ");
-        // Dnode_getSynonyms(tree  , tree->word);
-        // #endif
+        if(((Dword*)tree->element)->isWord)
+        {
+            printf("%s\n", ((Dword*)tree->element)->word);
+        }
     }
 
     for(i = 0; i < 26; i++)
@@ -163,7 +155,7 @@ Ddictionary_readCommands(Dconfig* config)
     config->commandsNb++;
 
     // Allocate config->commands with the correct number of lines.
-    config->commands = malloc(config->commandsNb * sizeof(char*));
+    config->commands = calloc(1, config->commandsNb * sizeof(char*));
 
     stream = freopen(config->commandsPath, "r", stream);
 
@@ -234,6 +226,8 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
 
     int nbBases, nbSynonyms, i;
 
+    Dword* currentWord;
+
     // Check if config->definitionsPath is not NULL
     if(! config->definitionsPath)
     {
@@ -258,22 +252,32 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
     // Read a base and two integers
     while(fscanf(stream, "%s %d %d", buffer, &nbBases, &nbSynonyms) != EOF)
     {
-        // First, add the base to the dictionary
-        Ddictionary_getOrAddWord(dictionary, buffer);
+        // First, add the word to the dictionary
+        currentWord = Ddictionary_getOrAddWord(dictionary, buffer);
 
+        // Then, add its bases and link them together
         for(i = 0; i < nbBases; i++)
         {
             fscanf(stream, "%s", tempBase);
 
-            // Dnode_addBaseToDerivative(dictionary, buffer, tempBase);
-            // Dnode_addDerivativeToBase(dictionary, tempBase, buffer);
+            // Get the base's memory address
+            Dword* base;
+            base = Ddictionary_getOrAddWord(dictionary, tempBase);
+
+            Dword_addBase(currentWord, base);
+            Dword_addDerivative(base, currentWord);
         }
 
+        // Finally, add the synonyms
         for(i = 0; i < nbSynonyms; i++)
         {
             fscanf(stream, "%s", tempSynonym);
             
-            // Dnode_addSynonym(dictionary, buffer, tempSynonym);
+            // Get the synonym's memory address
+            Dword* synonym;
+            synonym = Ddictionary_getOrAddWord(dictionary, tempSynonym);
+            
+            Dword_addSynonym(currentWord, synonym);
         }
     }
 
@@ -330,6 +334,8 @@ Ddictionary_runCommand(char* command, Dnode* dictionary)
         }
 
         printf("\n");
+
+        free(searchedWord);
     }
 }
 

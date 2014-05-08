@@ -5,6 +5,8 @@
 #include "Dconfig.h"
 #include "Dnode.h"
 
+#define DICTIONARY_SIZE 26
+
 extern void 
 Ddictionary_free(Dnode*);
 

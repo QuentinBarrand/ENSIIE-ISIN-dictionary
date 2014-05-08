@@ -16,7 +16,7 @@ extern void
 DwordList_add(DwordList** list, Dword* word)
 {
     DwordList* newLink; 
-    newLink = malloc(sizeof(DwordList));
+    newLink = calloc(1, sizeof(DwordList));
 
     newLink->word = word;
     newLink->next = *list;
@@ -49,13 +49,10 @@ DwordList_free(DwordList* list)
 extern void
 DwordList_print(DwordList* list)
 {
-    if(list)
-    {
         if(list->next)
         {
             DwordList_print(list->next);
         }
 
         printf("\t%s\n", list->word->word);
-    }
 }
