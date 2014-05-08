@@ -61,6 +61,7 @@ Ddictionary_getOrAddWord(Dnode* tree, char* word)
         tempWord[i + 1] = '\0';
 
         if(! tree->children[c - 'a'])
+        {
             tree->children[c - 'a'] = Dnode_new();
             tree->children[c - 'a']->element = Dword_new(tempWord);
         }

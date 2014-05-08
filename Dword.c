@@ -20,10 +20,6 @@ Dword_addDerivative(Dword* word, Dword* derivative)
 extern void
 Dword_addSynonym(Dword* word, Dword* synonym)
 {
-    #ifdef DEBUG
-    printf("Adding synonym %s to word %s\n", word->word, synonym->word);
-    #endif
-
     DwordList_add(&word->synonyms, synonym);
     DwordList_add(&synonym->synonyms, word);
 }
