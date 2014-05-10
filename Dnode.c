@@ -9,7 +9,7 @@
  * Extern functions
  */
 
-/** Frees the specified Dnode using a specific function for the element member. 
+/** Frees the specified Dnode using a specific function for the element member.
  *
  * \param node the Dnode to be recursively freed.
  * \param freeElement a pointer to the function used to free the element member.
@@ -18,20 +18,20 @@ extern void
 Dnode_free(Dnode* node, void (*freeElement)(void*))
 {
     int i;
-    
-    for(i = 0; i < 26; i++)
+
+    for(i = 0; i < CHILDREN_NUMBER; i++)
     {
         if(node->children[i])
         {
             Dnode_free(node->children[i], freeElement);
         }
     }
-    
+
     if(node->element)
     {
         freeElement(node->element);
     }
-    
+
     free(node);
 }
 
@@ -39,7 +39,7 @@ Dnode_free(Dnode* node, void (*freeElement)(void*))
  *
  * \returns A new, freshly allocated Dnode object.
  */
-extern Dnode* 
+extern Dnode*
 Dnode_new()
 {
     return calloc(1, sizeof(Dnode));

@@ -4,20 +4,30 @@
 
 #include "Dconfig.h"
 #include "Dnode.h"
+#include "Dword.h"
 
-#define DICTIONARY_SIZE 26
+/** A container for the N-ary tree and othr things. */
+typedef struct _Ddictionary
+{
+    /** The dictionary itself : a tree of Dnode. */
+    Dnode* tree;
 
-extern void 
-Ddictionary_free(Dnode*);
+    /** A list of all the proper words contained into the tree. */
+    DwordList* words; 
+} Ddictionary;
 
-extern int 
-Ddictionary_parseArgs(Dconfig*, int, char**);
 
-extern int
-Ddictionary_processArgs(Dconfig*, Dnode*);
+extern Ddictionary*
+Ddictionary_new();
 
 extern void
-Ddictionary_runInteractive(Dconfig*, Dnode*);
+Ddictionary_free(Ddictionary*);
+
+extern int
+Ddictionary_processArgs(Dconfig*, Ddictionary*);
+
+extern void
+Ddictionary_runInteractive(Dconfig*, Ddictionary*);
 
 
 #endif

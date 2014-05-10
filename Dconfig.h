@@ -11,12 +11,12 @@ typedef struct _Dconfig {
     /** The executable's name. */
     char* execName;
 
-    /** The path to the file containing all the derivatives and synonyms 
+    /** The path to the file containing all the derivatives and synonyms
      * definitions.
      */
     char* definitionsPath;
-    
-    /** The path to the file containing all the commands that should be 
+
+    /** The path to the file containing all the commands that should be
      * executed before we start an interactive session.
      */
     char* commandsPath;
@@ -42,11 +42,13 @@ typedef struct _Dconfig {
  * Extern function declarations
  */
 
-extern Dconfig*
-Dconfig_new();
-
 extern void
 Dconfig_free(Dconfig*);
 
+extern Dconfig*
+Dconfig_new();
+
+extern int
+Dconfig_parseArgs(Dconfig*, int, char**);
 
 #endif

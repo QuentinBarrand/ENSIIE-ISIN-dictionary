@@ -13,20 +13,20 @@ int main(int argc, char** argv)
     Dconfig* config;
     config = Dconfig_new();
 
-    if(! Ddictionary_parseArgs(config, argc, argv))
+    if(! Dconfig_parseArgs(config, argc, argv))
     {
         Dconfig_free(config);
         return EXIT_FAILURE;
     }
 
-    Dnode* dictionary;
-    dictionary = Dnode_new();
+    Ddictionary* dict;
+    dict = Ddictionary_new();
 
     // Trigger actions required by configuration and initialize the dictionary
-    if(Ddictionary_processArgs(config, dictionary))
+    if(Ddictionary_processArgs(config, dict))
     {
         // Run the interactive mode
-        Ddictionary_runInteractive(config, dictionary);
+        Ddictionary_runInteractive(config, dict);
 
         returnValue = EXIT_SUCCESS;
     }
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     Dconfig_free(config);
 
     // Free the dictionary
-    Ddictionary_free(dictionary);
+    Ddictionary_free(dict);
 
     return returnValue;
 }

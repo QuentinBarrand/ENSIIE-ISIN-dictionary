@@ -1,4 +1,4 @@
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,19 +18,19 @@ static void
 Ddictionary_help(char*);
 
 static Dword*
-Ddictionary_getOrAddWord(Dnode*, char*);
+Ddictionary_getOrAddWord(Ddictionary*, char*, bool);
 
 static void
-Ddictionary_print(Dnode*);
+Ddictionary_printTree(Dnode*);
 
 static int
 Ddictionary_readCommands(Dconfig*);
 
 static int
-Ddictionary_readDefinitions(Dconfig*, Dnode*);
+Ddictionary_readDefinitions(Dconfig*, Ddictionary*);
 
 static void
-Ddictionary_runCommand(char*, Dnode*);
+Ddictionary_runCommand(char*, Ddictionary*);
 
 /*******************************************************************************
  * Static functions
@@ -39,17 +39,22 @@ Ddictionary_runCommand(char*, Dnode*);
 /** Gets the Dword object for a given word in the given dictionary, or creates
  * it if it does not exist yet.
  *
- * \param tree the dictionary to look into.
+ * \param dict the dictionary to look into.
  * \param word the word to look for in the give dictionary.
+ * \param addToList a boolean variable. If `true`, the word is added to the
+ *    Ddictionary.words list.
  *
  * \returns A pointer to the Dword object that contains the queried word.
  */
 static Dword*
-Ddictionary_getOrAddWord(Dnode* tree, char* word)
+Ddictionary_getOrAddWord(Ddictionary* dict, char* word, bool addToList)
 {
     char tempWord[MAX_WORD_SIZE];
     int c, nbChars;
     int i;
+
+    Dnode* tree;
+    tree = dict->tree;
 
     nbChars = strlen(word);
 
@@ -65,11 +70,16 @@ Ddictionary_getOrAddWord(Dnode* tree, char* word)
             tree->children[c - 'a'] = Dnode_new();
             tree->children[c - 'a']->element = Dword_new(tempWord);
         }
-        
+
         tree = tree->children[c - 'a'];
     }
-    
-    ((Dword*)tree->element)->isWord = TRUE;
+
+    if(addToList)
+    {
+        DwordList_add(&dict->words, ((Dword*)tree->element));
+    }
+
+    ((Dword*)tree->element)->isWord = true;
 
     return ((Dword*)tree->element);
 }
@@ -78,7 +88,7 @@ Ddictionary_getOrAddWord(Dnode* tree, char* word)
  *
  * \param execName the executable's name that was used to start the program.
  */
-static void 
+static void
 Ddictionary_help(char* execName)
 {
     printf("Usage : %s <options> <definitions>"
@@ -99,10 +109,10 @@ Ddictionary_help(char* execName)
 
 /** Prints the dictionary on the standard output.
  *
- * \param tree the dictionary to print.
+ * \param tree the Ddictionary.tree to print.
  */
 static void
-Ddictionary_print(Dnode* tree)
+Ddictionary_printTree(Dnode* tree)
 {
     int i;
 
@@ -114,11 +124,11 @@ Ddictionary_print(Dnode* tree)
         }
     }
 
-    for(i = 0; i < 26; i++)
+    for(i = 0; i < CHILDREN_NUMBER; i++)
     {
         if(tree->children[i])
         {
-            Ddictionary_print(tree->children[i]);
+            Ddictionary_printTree(tree->children[i]);
         }
     }
 }
@@ -142,10 +152,10 @@ Ddictionary_readCommands(Dconfig* config)
             " commandes %s. Vérifiez que le fichier existe et réessayez."
             "\n", config->execName, config->commandsPath);
 
-        return FALSE;        
+        return FALSE;
     }
 
-    while((c = fgetc(stream)) != EOF )
+    while((c = fgetc(stream)) != EOF)
     {
         if(c == '\n')
         {
@@ -162,7 +172,7 @@ Ddictionary_readCommands(Dconfig* config)
 
     for(i = 0; i < config->commandsNb; i++)
     {
-        /* This parameter is actually not used by getline() since 
+        /* This parameter is actually not used by getline() since
          * config->commands[i] is NULL.
          * getline() thus ignores it, allocates the appropriate amount of memory
          * and puts a pointer to that place into config->commands[i].
@@ -195,7 +205,7 @@ Ddictionary_readCommands(Dconfig* config)
 
             // Remove the item from the array
             free(config->commands[i]);
-            
+
             for(j = i; j < config->commandsNb - 1; j++)
             {
                 config->commands[j] = config->commands[j + 1];
@@ -212,12 +222,12 @@ Ddictionary_readCommands(Dconfig* config)
 /** Reads the dictionary's configuration file.
  *
  * \param config the application's configuration.
- * \param dictionary the Dnode dictionary to be populated.
+ * \param dictionary the Ddictionary object to be populated.
  *
  * \returns `0` if an error occured, else `1`.
  */
 static int
-Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
+Ddictionary_readDefinitions(Dconfig* config, Ddictionary* dict)
 {
     FILE* stream;
 
@@ -247,14 +257,14 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
             "définitions %s. Vérifiez que le fichier existe et réessayez."
             "\n", config->execName, config->definitionsPath);
 
-        return FALSE;        
+        return FALSE;
     }
 
     // Read a base and two integers
     while(fscanf(stream, "%s %d %d", buffer, &nbBases, &nbSynonyms) != EOF)
     {
         // First, add the word to the dictionary
-        currentWord = Ddictionary_getOrAddWord(dictionary, buffer);
+        currentWord = Ddictionary_getOrAddWord(dict, buffer, true);
 
         // Then, add its bases and link them together
         for(i = 0; i < nbBases; i++)
@@ -263,7 +273,7 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
 
             // Get the base's memory address
             Dword* base;
-            base = Ddictionary_getOrAddWord(dictionary, tempBase);
+            base = Ddictionary_getOrAddWord(dict, tempBase, true);
 
             Dword_addBase(currentWord, base);
             Dword_addDerivative(base, currentWord);
@@ -273,11 +283,11 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
         for(i = 0; i < nbSynonyms; i++)
         {
             fscanf(stream, "%s", tempSynonym);
-            
+
             // Get the synonym's memory address
             Dword* synonym;
-            synonym = Ddictionary_getOrAddWord(dictionary, tempSynonym);
-            
+            synonym = Ddictionary_getOrAddWord(dict, tempSynonym, true);
+
             Dword_addSynonym(currentWord, synonym);
         }
     }
@@ -293,7 +303,7 @@ Ddictionary_readDefinitions(Dconfig* config, Dnode* dictionary)
  * \param dictionary the dictionary in which the command should be executed.
  */
 static void
-Ddictionary_runCommand(char* command, Dnode* dictionary)
+Ddictionary_runCommand(char* command, Ddictionary* dict)
 {
     // Looks like a valid command
     if(strlen(command) > 5)
@@ -302,7 +312,7 @@ Ddictionary_runCommand(char* command, Dnode* dictionary)
         searchedWord = strndup(command + 5, 20);
 
         Dword* word;
-        word = Ddictionary_getOrAddWord(dictionary, searchedWord);
+        word = Ddictionary_getOrAddWord(dict, searchedWord, false);
 
         if(strncmp(command, "BASE ", 5) == 0 ||
             strncmp(command, "base ", 5) == 0)
@@ -344,123 +354,44 @@ Ddictionary_runCommand(char* command, Dnode* dictionary)
  * Extern functions
  */
 
-/** Frees recursively a Dnode dictionary and all of its dynamically allocated 
+/** Frees recursively a Dnode dictionary and all of its dynamically allocated
  * attributes.
  *
- * \param tree The Dnode dictionary to be freed.
+ * \param dict The Dnode dictionary to be freed.
  */
-extern void 
-Ddictionary_free(Dnode* tree)
+extern void
+Ddictionary_free(Ddictionary* dict)
 {
-    Dnode_free(tree, Dword_free);
+    Dnode_free(dict->tree, Dword_free);
+
+    /* All the members of this dynamic array have already been freed by the
+     * above instruction, we only have to free the array itself.
+     */
+    DwordList_free(dict->words);
+
+    free(dict);
 }
 
-/** Parses the program's arguments and populates a Dconfig object.
- *
- * \param config a Dconfig object to be populated.
- * \param argc the program's number of arguments.
- * \param argv the program's arguments.
- *
- * \returns `0` if there was an error, else `1`.
- */
-extern int 
-Ddictionary_parseArgs(Dconfig* config, int argc, char** argv)
+extern Ddictionary*
+Ddictionary_new()
 {
-    char* currentArg;
-    int i;
+    Ddictionary* newDic;
+    newDic = calloc(1, sizeof(Ddictionary));
 
-    // There should be at least 2 arguments; if not, we print the help
-    if(argc < 2)
-    {
-        fprintf(stderr, "%s : Merci: de fournir un fichier dans lequel lire "
-            " les définitions de bases et de synonymes."
-            "\nVoir %s -h pour l'aide."
-            "\n", argv[0], argv[0]);
+    newDic->tree = Dnode_new();
 
-        return FALSE;
-    }
-
-    config->execName = argv[0];
-
-    for(i = 1; i < argc; i++)
-    {
-        currentArg = argv[i];
-
-        if(currentArg[0] != '-')
-        {
-            // If this is the first time we are seing a dash-less argument
-            if(! config->definitionsPath)
-            {
-                config->definitionsPath = currentArg;
-            }
-            else
-            {
-                fprintf(stderr, "%s : Argument %s non reconnu."
-                    "\n", argv[0], currentArg);
-            }
-        }
-        else
-        {
-            // -if <commands> is the only argument where strlen(2) > 2
-            if(strlen(currentArg) > 2)
-            {
-                if(strcmp(currentArg, "-if") == 0)
-                {
-                    // If nothing has been supplied after -if (last argument)
-                    if(i == argc - 1)
-                    {
-                    fprintf(stderr, "%s : -if doit être suivi d'un nom de "
-                        "fichier de commandes."
-                        "\n", argv[0]);
-                    }
-                    else
-                    {
-                        config->commandsPath = argv[++i];
-                    }
-                }
-                else
-                {
-                    fprintf(stderr, "%s : Argument %s non reconnu."
-                        "\n", argv[0], currentArg);
-                }
-
-                continue;
-            }
-
-            // All the other arguments
-            switch(currentArg[1])
-            {
-                case 'd':
-                    config->d_option = TRUE;
-                    break;
-
-                case 'h':
-                    config->h_option = TRUE;
-                    break;
-
-                case 'p':
-                    config->p_option = TRUE;
-                    break;
-
-                default:
-                    fprintf(stderr, "%s : Argument %s non reconnu."
-                        "\n", argv[0], currentArg);
-            }
-        }
-    }
-
-    return TRUE;
+    return newDic;
 }
 
 /** Triggers actions requested by the configuration/
  *
  * \param config the application's configuration.
- * \param dictionary an initialized Dnode dictionary.
+ * \param dict an initialized Dnode dictionary.
  *
  * \returns `0` if there was an error, else `1`.
  */
 extern int
-Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
+Ddictionary_processArgs(Dconfig* config, Ddictionary* dict)
 {
     int i;
 
@@ -477,7 +408,7 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
     }
 
     // Import the definitions file
-    if(! Ddictionary_readDefinitions(config, dictionary))
+    if(! Ddictionary_readDefinitions(config, dict))
     {
         return FALSE;
     }
@@ -493,7 +424,7 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
     if(config->p_option)
     {
         printf("Affichage de la structure de données :\n");
-        Ddictionary_print(dictionary);
+        Ddictionary_printTree(dict->tree);
         printf("\n");
     }
 
@@ -501,7 +432,7 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
     for(i = 0; i < config->commandsNb; i++)
     {
         printf("\nCommande : %s\n", config->commands[i]);
-        Ddictionary_runCommand(config->commands[i], dictionary);
+        Ddictionary_runCommand(config->commands[i], dict);
     }
 
     return TRUE;
@@ -511,10 +442,10 @@ Ddictionary_processArgs(Dconfig* config, Dnode* dictionary)
  * from the user.
  *
  * \param config the application's configuration.
- * \param dictionary the dictionary in which commands should be executed.
+ * \param dict the dictionary in which commands should be executed.
  */
 extern void
-Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
+Ddictionary_runInteractive(Dconfig* config, Ddictionary* dict)
 {
     char input[30];
 
@@ -533,6 +464,6 @@ Ddictionary_runInteractive(Dconfig* config, Dnode* dictionary)
             return;
         }
 
-        Ddictionary_runCommand(input, dictionary);
+        Ddictionary_runCommand(input, dict);
     }
 }

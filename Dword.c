@@ -25,7 +25,7 @@ Dword_addDerivative(Dword* word, Dword* derivative)
     DwordList_add(&word->derivatives, derivative);
 }
 
-/** Adds a synonym relation between two words. They will be added to each 
+/** Adds a synonym relation between two words. They will be added to each
  * other's synonyms list.
  *
  * \param word the first word of the relation.
@@ -42,7 +42,7 @@ Dword_addSynonym(Dword* word, Dword* synonym)
  *
  * \param word a character string to initialize the word field with.
  *
- * \returns A new, freshly allocated Dword object. 
+ * \returns A new, freshly allocated Dword object.
  */
 extern Dword*
 Dword_new(char* word)
@@ -57,7 +57,7 @@ Dword_new(char* word)
 
 /** Frees a word and its bases, derivatives and synonyms lists recursively.
  *
- * \param void_word the Dword to be freed. Because this function is called  by 
+ * \param void_word the Dword to be freed. Because this function is called  by
  *    Dnode_free() using its pointer, its argument must be of generic type
  *    void*.
  */
@@ -65,13 +65,27 @@ extern void
 Dword_free(void* void_word)
 {
     Dword* word;
-    word = (Dword*)void_word; 
+    word = (Dword*)void_word;
 
     DwordList_free(word->bases);
     DwordList_free(word->derivatives);
-    DwordList_free(word->synonyms); 
+    DwordList_free(word->synonyms);
 
     free(word);
+}
+
+/** Compares a word to a regular expression.
+ *
+ * \param word the Dword to be checked.
+ * \param regex a string containing a regular expression to try to match to the
+ *    the Dword.
+ *
+ * \returns `1` if the regex matches the specified Dword, else `0`.
+ */
+extern int
+Dword_doesMatch(Dword* word, char* regex)
+{
+
 }
 
 /** Prints the list of the argument's bases on the standard output.
@@ -83,7 +97,7 @@ Dword_printBases(Dword* word)
 {
     if(word->bases)
     {
-        DwordList_print(word->bases);        
+        DwordList_print(word->bases);
     }
 }
 
@@ -96,7 +110,7 @@ Dword_printDerivatives(Dword* word)
 {
     if(word->derivatives)
     {
-        DwordList_print(word->derivatives);        
+        DwordList_print(word->derivatives);
     }
 }
 
@@ -109,6 +123,6 @@ Dword_printSynonyms(Dword* word)
 {
     if(word->synonyms)
     {
-        DwordList_print(word->synonyms);        
+        DwordList_print(word->synonyms);
     }
 }

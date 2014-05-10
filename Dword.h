@@ -1,6 +1,10 @@
 #ifndef WORD_H
 #define WORD_H
 
+
+#include <stdbool.h>
+
+
 #include "DwordList.h"
 #include "Dutils.h"
 
@@ -12,14 +16,14 @@ typedef struct _Dword
     char word[MAX_WORD_SIZE];
 
     /** Boolean. Value is `0` if the node does not contain a word, else `1`. */
-    char isWord;
+    bool isWord;
 
     /** DwordList of the word's bases. */
     DwordList* bases;
-    
+
     /** DwordList of the word's derivatives. */
     DwordList* derivatives;
-    
+
     /** DwordList of the word's synonyms. */
     DwordList* synonyms;
 } Dword;
@@ -35,6 +39,9 @@ Dword_addSynonym(Dword*, Dword*);
 
 extern void
 Dword_free(void*);
+
+extern int
+Dword_doesMatch(Dword*, char*);
 
 extern Dword*
 Dword_new();
