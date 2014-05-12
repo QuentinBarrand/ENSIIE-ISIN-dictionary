@@ -2,6 +2,8 @@
 #define DCONFIG_H
 
 
+#include <stdbool.h>
+
 /*******************************************************************************
  * Types declarations
  */
@@ -28,13 +30,13 @@ typedef struct _Dconfig {
     char** commands;
 
     /** Contains `1` if the `-d` switch was part of the arguments. */
-    int d_option;
+    bool d_option;
 
     /** Contains `1` if the `-h` switch was part of the arguments. */
-    int h_option;
+    bool h_option;
 
     /** Contains `1` if the `-p` switch was part of the arguments. */
-    int p_option;
+    bool p_option;
 } Dconfig;
 
 
@@ -48,7 +50,7 @@ Dconfig_free(Dconfig*);
 extern Dconfig*
 Dconfig_new();
 
-extern int
+extern bool
 Dconfig_parseArgs(Dconfig*, int, char**);
 
 #endif

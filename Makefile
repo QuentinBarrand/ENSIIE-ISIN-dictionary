@@ -9,7 +9,7 @@ all: main.c application.o Dconfig.o Ddictionary.o Dnode.o Dword.o DwordList.o
 application.o: application.c
 	gcc -c -o $@ $(GCC_OPTS) application.c	
 
-Dconfig.o: Dconfig.h Dconfig.c
+Dconfig.o: Ddictionary.h Dconfig.c
 	gcc -c -o $@ $(GCC_OPTS) Dconfig.c
 
 Ddictionary.o: Ddictionary.h Ddictionary.c
@@ -18,10 +18,10 @@ Ddictionary.o: Ddictionary.h Ddictionary.c
 Dnode.o: Dnode.h Dnode.c
 	gcc -c -o $@ $(GCC_OPTS) Dnode.c
 
-Dword.o: Dword.h Dword.c
+Dword.o: Ddictionary.h Dword.c
 	gcc -c -o $@ $(GCC_OPTS) Dword.c
 
-DwordList.o: DwordList.h DwordList.c
+DwordList.o: Ddictionary.h DwordList.c
 	gcc -c -o $@ $(GCC_OPTS) DwordList.c
 
 # Build targets

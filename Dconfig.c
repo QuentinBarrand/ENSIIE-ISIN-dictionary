@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "Dconfig.h"
-#include "Dutils.h"
+
 
 /*******************************************************************************
  * Extern functions
@@ -47,7 +47,7 @@ Dconfig_free(Dconfig* config)
  *
  * \returns `0` if there was an error, else `1`.
  */
-extern int
+extern bool
 Dconfig_parseArgs(Dconfig* config, int argc, char** argv)
 {
     char* currentArg;
@@ -61,7 +61,7 @@ Dconfig_parseArgs(Dconfig* config, int argc, char** argv)
             "\nVoir %s -h pour l'aide."
             "\n", argv[0], argv[0]);
 
-        return FALSE;
+        return false;
     }
 
     config->execName = argv[0];
@@ -115,15 +115,15 @@ Dconfig_parseArgs(Dconfig* config, int argc, char** argv)
             switch(currentArg[1])
             {
                 case 'd':
-                    config->d_option = TRUE;
+                    config->d_option = true;
                     break;
 
                 case 'h':
-                    config->h_option = TRUE;
+                    config->h_option = true;
                     break;
 
                 case 'p':
-                    config->p_option = TRUE;
+                    config->p_option = true;
                     break;
 
                 default:
@@ -133,5 +133,5 @@ Dconfig_parseArgs(Dconfig* config, int argc, char** argv)
         }
     }
 
-    return TRUE;
+    return true;
 }

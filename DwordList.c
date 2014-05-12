@@ -1,9 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "DwordList.h"
+#include "Ddictionary.h"
 
-#include "Dword.h"
 
 /*******************************************************************************
  * Extern functions

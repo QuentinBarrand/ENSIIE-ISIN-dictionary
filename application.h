@@ -1,11 +1,14 @@
+#include <stdbool.h>
+
 #include "Dconfig.h"
 #include "Ddictionary.h"
+
 
 /*******************************************************************************
  * Extern declarations
  */
 
-extern int
+extern bool
 processArgs(Dconfig*, Ddictionary*);
 
 extern void

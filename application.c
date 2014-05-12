@@ -3,10 +3,9 @@
 #include <string.h>
 
 #include "application.h"
-
 #include "Dconfig.h"
 #include "Ddictionary.h"
-#include "DwordList.h"
+
 
 /*******************************************************************************
  * Static declarations
@@ -21,10 +20,10 @@ printDwordList(DwordList*, int*);
 static void
 printTree(Dnode*);
 
-static int
+static bool
 readCommands(Dconfig*);
 
-static int
+static bool
 readDefinitions(Dconfig*, Ddictionary*);
 
 static void
@@ -103,7 +102,7 @@ printTree(Dnode* tree)
  *
  * \param config the application's configuration.
  */
-static int
+static bool
 readCommands(Dconfig* config)
 {
     int i, j;
@@ -117,7 +116,7 @@ readCommands(Dconfig* config)
             " commandes %s. Vérifiez que le fichier existe et réessayez."
             "\n", config->execName, config->commandsPath);
 
-        return FALSE;
+        return false;
     }
 
     while((c = fgetc(stream)) != EOF)
@@ -181,7 +180,7 @@ readCommands(Dconfig* config)
         }
     }
 
-    return TRUE;
+    return true;
 }
 
 /** Reads the dictionary's configuration file.
@@ -191,7 +190,7 @@ readCommands(Dconfig* config)
  *
  * \returns `0` if an error occured, else `1`.
  */
-static int
+static bool
 readDefinitions(Dconfig* config, Ddictionary* dict)
 {
     FILE* stream;
@@ -212,7 +211,7 @@ readDefinitions(Dconfig* config, Ddictionary* dict)
             "\nVoir %s -h pour l'aide."
             "\n", config->execName, config->execName);
 
-        return FALSE;
+        return false;
     }
 
     // Open a file descriptor
@@ -222,7 +221,7 @@ readDefinitions(Dconfig* config, Ddictionary* dict)
             "définitions %s. Vérifiez que le fichier existe et réessayez."
             "\n", config->execName, config->definitionsPath);
 
-        return FALSE;
+        return false;
     }
 
     // Read a base and two integers
@@ -259,7 +258,7 @@ readDefinitions(Dconfig* config, Ddictionary* dict)
 
     fclose(stream);
 
-    return TRUE;
+    return true;
 }
 
 /** Runs a command in a specified dictionary.
@@ -365,7 +364,10 @@ runCommand(char* command, Ddictionary* dict, Dconfig* config)
                         {
                             if(! DwordList_exists(tempList, list->word->word))
                             {
-                                DwordList_add(&tempList, list->word);                                
+                                /* Populate a temporary list that we can filter 
+                                 * to avoid printing 2 times the same word.
+                                 */
+                                DwordList_add(&tempList, list->word);
                             }
                         }
 
@@ -420,7 +422,7 @@ runCommand(char* command, Ddictionary* dict, Dconfig* config)
  *
  * \returns `0` if there was an error, else `1`.
  */
-extern int
+extern bool
 processArgs(Dconfig* config, Ddictionary* dict)
 {
     int i;
@@ -433,21 +435,21 @@ processArgs(Dconfig* config, Ddictionary* dict)
         // Let's stop here if nothing else was supplied
         if(! config->definitionsPath)
         {
-            return FALSE;
+            return false;
         }
     }
 
     // Import the definitions file
     if(! readDefinitions(config, dict))
     {
-        return FALSE;
+        return false;
     }
 
     // Import the commands file
     if(config->commandsPath &&
         ! readCommands(config))
     {
-        return FALSE;
+        return false;
     }
 
     // Print data structure if needed
@@ -465,7 +467,7 @@ processArgs(Dconfig* config, Ddictionary* dict)
         runCommand(config->commands[i], dict, config);
     }
 
-    return TRUE;
+    return true;
 }
 
 /** Runs an interactive session. Starts an infinite loop waiting for commands
@@ -479,7 +481,7 @@ runInteractive(Dconfig* config, Ddictionary* dict)
 {
     char input[30];
 
-    while(TRUE)
+    while(true)
     {
         printf("Entrez une commande (BASE, DERI, SYNO, INFO) ou q pour quitter"
         " : ");

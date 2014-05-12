@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Dword.h"
+#include "Ddictionary.h"
+
+/*******************************************************************************
+ * Extern functions
+ */
 
 /** Adds a word as another word's base and vice versa.
  *
@@ -94,7 +98,7 @@ Dword_free(void* void_word)
  * \param regex a string containing a regular expression to try to match to the
  *    the Dword.
  *
- * \returns `1` if the regex matches the specified Dword, else `0`.
+ * \returns `true` if the regex matches the specified Dword, else `false`.
  */
 extern bool
 Dword_doesMatch(Dword* word, char* regex)

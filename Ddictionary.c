@@ -4,10 +4,6 @@
 
 #include "Ddictionary.h"
 
-#include "Dnode.h"
-#include "Dutils.h"
-#include "Dword.h"
-
 
 /*******************************************************************************
  * Extern functions
