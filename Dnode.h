@@ -2,7 +2,7 @@
 #define DNODE_H
 
 /** The size of the `children` array containing the node's children. */
-#define CHILDREN_NUMBER 26
+#define ALPHABET_SIZE 26
 
 /** Project's subject allows us to set the word's maximum length. */
 #define MAX_WORD_SIZE 20
@@ -16,7 +16,7 @@ typedef struct _Dnode {
     /** This is a N-ary tree, one children for each one of the alphabet
      * letter.
      */
-    struct _Dnode* children[CHILDREN_NUMBER];
+    struct _Dnode* children[ALPHABET_SIZE];
 } Dnode;
 
 

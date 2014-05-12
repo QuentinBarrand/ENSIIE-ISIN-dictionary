@@ -23,10 +23,13 @@ typedef struct _DwordList
 extern void
 DwordList_add(DwordList**, Dword*);
 
+extern bool
+DwordList_exists(DwordList*, char*);
+
 extern void
 DwordList_free(DwordList*);
 
-extern void
-DwordList_print(DwordList*);
+// extern void
+// DwordList_print(DwordList*);
 
 #endif

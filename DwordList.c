@@ -28,6 +28,23 @@ DwordList_add(DwordList** list, Dword* word)
     *list = newLink;
 }
 
+extern bool
+DwordList_exists(DwordList* list, char* word)
+{
+    while(list)
+    {
+        if(Dword_contains(list->word, word))
+        {
+            return true;
+        }
+
+        list = list->next;
+    }
+
+    return false;
+}
+
+
 /** Frees recursively a DwordList linked list.
  *
  * \param list the DwordList to be freed.
@@ -44,19 +61,4 @@ DwordList_free(DwordList* list)
 
         free(list);
     }
-}
-
-/** Prints the word in the DwordList object.
- *
- * \param list the list containing the Dword->word to be printed.
- */
-extern void
-DwordList_print(DwordList* list)
-{
-        if(list->next)
-        {
-            DwordList_print(list->next);
-        }
-
-        printf("\t%s\n", list->word->word);
 }

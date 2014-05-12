@@ -2,7 +2,6 @@
 #define DDICTIONARY_H
 
 
-#include "Dconfig.h"
 #include "Dnode.h"
 #include "Dword.h"
 
@@ -12,8 +11,11 @@ typedef struct _Ddictionary
     /** The dictionary itself : a tree of Dnode. */
     Dnode* tree;
 
+    #warning doc à refaire
     /** A list of all the proper words contained into the tree. */
-    DwordList* words; 
+    DwordList* hashTable[ALPHABET_SIZE * ALPHABET_SIZE + ALPHABET_SIZE];
+
+    int counter;
 } Ddictionary;
 
 
@@ -23,11 +25,7 @@ Ddictionary_new();
 extern void
 Ddictionary_free(Ddictionary*);
 
-extern int
-Ddictionary_processArgs(Dconfig*, Ddictionary*);
-
-extern void
-Ddictionary_runInteractive(Dconfig*, Ddictionary*);
-
+extern Dword*
+Ddictionary_getOrAddWord(Ddictionary*, char*);
 
 #endif

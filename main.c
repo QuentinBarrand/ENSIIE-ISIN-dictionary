@@ -23,10 +23,10 @@ int main(int argc, char** argv)
     dict = Ddictionary_new();
 
     // Trigger actions required by configuration and initialize the dictionary
-    if(Ddictionary_processArgs(config, dict))
+    if(processArgs(config, dict))
     {
         // Run the interactive mode
-        Ddictionary_runInteractive(config, dict);
+        runInteractive(config, dict);
 
         returnValue = EXIT_SUCCESS;
     }

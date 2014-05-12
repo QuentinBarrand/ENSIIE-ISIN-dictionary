@@ -2,12 +2,15 @@ GCC_OPTS = -O3
 
 .PHONY: doc
 
-all: main.c Dconfig.o Ddictionary.o Dnode.o Dword.o DwordList.o
-	gcc -o dictionnaire $(GCC_OPTS) main.c Dconfig.o DwordList.o Dword.o \
-		Dnode.o Ddictionary.o
+all: main.c application.o Dconfig.o Ddictionary.o Dnode.o Dword.o DwordList.o
+	gcc -o dictionnaire $(GCC_OPTS) main.c application.o Dconfig.o DwordList.o \
+	Dword.o Dnode.o Ddictionary.o
+
+application.o: application.c
+	gcc -c -o $@ $(GCC_OPTS) application.c	
 
 Dconfig.o: Dconfig.h Dconfig.c
-	gcc -c -o $@ $(GCC_OPTS) Dconfig.c	
+	gcc -c -o $@ $(GCC_OPTS) Dconfig.c
 
 Ddictionary.o: Ddictionary.h Ddictionary.c
 	gcc -c -o $@ $(GCC_OPTS) Ddictionary.c

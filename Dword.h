@@ -38,6 +38,9 @@ Dword_addDerivative(Dword*, Dword*);
 extern void
 Dword_addSynonym(Dword*, Dword*);
 
+extern bool
+Dword_contains(Dword*, char*);
+
 extern void
 Dword_free(void*);
 
@@ -46,14 +49,5 @@ Dword_doesMatch(Dword*, char*);
 
 extern Dword*
 Dword_new();
-
-extern void
-Dword_printBases(Dword*);
-
-extern void
-Dword_printDerivatives(Dword*);
-
-extern void
-Dword_printSynonyms(Dword*);
 
 #endif

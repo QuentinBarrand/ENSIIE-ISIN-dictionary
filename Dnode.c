@@ -19,7 +19,7 @@ Dnode_free(Dnode* node, void (*freeElement)(void*))
 {
     int i;
 
-    for(i = 0; i < CHILDREN_NUMBER; i++)
+    for(i = 0; i < ALPHABET_SIZE; i++)
     {
         if(node->children[i])
         {

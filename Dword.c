@@ -39,6 +39,19 @@ Dword_addSynonym(Dword* word, Dword* synonym)
     DwordList_add(&synonym->synonyms, word);
 }
 
+extern bool
+Dword_contains(Dword* word, char* string)
+{
+    if(strcmp(word->word, string) == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 /** Allocates a new Dword object and puts the argument in its word field.
  *
  * \param word a character string to initialize the word field with.
@@ -139,43 +152,4 @@ Dword_doesMatch(Dword* word, char* regex)
     }
     
     return status;
-}
-
-/** Prints the list of the argument's bases on the standard output.
- *
- * \param word the word of which bases should be printed.
- */
-extern void
-Dword_printBases(Dword* word)
-{
-    if(word->bases)
-    {
-        DwordList_print(word->bases);
-    }
-}
-
-/** Prints the list of the argument's derivatives on the standard output.
- *
- * \param word the word of which derivatives should be printed.
- */
-extern void
-Dword_printDerivatives(Dword* word)
-{
-    if(word->derivatives)
-    {
-        DwordList_print(word->derivatives);
-    }
-}
-
-/** Prints the list of the argument's synonyms on the standard output.
- *
- * \param word the word of which synonyms should be printed.
- */
-extern void
-Dword_printSynonyms(Dword* word)
-{
-    if(word->synonyms)
-    {
-        DwordList_print(word->synonyms);
-    }
 }
