@@ -35,8 +35,6 @@ Ddictionary_free(Ddictionary* dict)
  *
  * \param dict the dictionary to look into.
  * \param word the word to look for in the give dictionary.
- * \param addToList a boolean variable. If `true`, the word is added to the
- *    Ddictionary.words list.
  *
  * \returns A pointer to the Dword object that contains the queried word.
  */

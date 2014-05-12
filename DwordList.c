@@ -27,6 +27,13 @@ DwordList_add(DwordList** list, Dword* word)
     *list = newLink;
 }
 
+/** Checks if a specified word exists in the specified DwordList.
+ *
+ * \param list the specified DwordList.
+ * \param word the string to search for.
+ *
+ * \returns `true` if the word is present in the list, else `false`.
+ */
 extern bool
 DwordList_exists(DwordList* list, char* word)
 {

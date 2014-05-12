@@ -55,6 +55,7 @@ help(char* execName)
 /** Prints the word in the DwordList object.
  *
  * \param list the list containing the Dword->word to be printed.
+ * \param counter a pointer to an int counter to increment.
  */
 static void
 printDwordList(DwordList* list, int* counter)
@@ -265,6 +266,7 @@ readDefinitions(Dconfig* config, Ddictionary* dict)
  *
  * \param command the command to be executed.
  * \param dict the dictionary in which the command should be executed.
+ * \param config the application's configuration.
  */
 static void
 runCommand(char* command, Ddictionary* dict, Dconfig* config)
