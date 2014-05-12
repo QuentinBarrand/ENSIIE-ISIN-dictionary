@@ -54,8 +54,6 @@ Ddictionary_getOrAddWord(Ddictionary* dict, char* word)
     Dnode* tree;
     tree = dict->tree;
 
-    DwordList* list;
-
     nbChars = strlen(word);
 
     for(i = 0; i < nbChars; i++)
@@ -83,17 +81,9 @@ Ddictionary_getOrAddWord(Ddictionary* dict, char* word)
         c1 = word[i] - 'a';
         c2 = word[i + 1] - 'a';
 
-        #ifdef DEBUG
-        printf("Checking for %s in list at key %c*%c\n", word, word[i], word[i + 1]);
-        #endif
-
         if(! DwordList_exists(dict->hashTable[(c1 * ALPHABET_SIZE) + c2], 
             tree->element))
         {
-            #ifdef DEBUG
-            printf("Does not exist, adding\n", word);
-            #endif
-
             DwordList_add(&dict->hashTable[(c1 * ALPHABET_SIZE) + c2], 
                 ((Dword*)tree->element));
         }

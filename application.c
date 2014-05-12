@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "application.h"
 
 #include "Dconfig.h"
 #include "Ddictionary.h"
@@ -15,7 +16,7 @@ static void
 help(char*);
 
 static void
-printDwordList(DwordList*);
+printDwordList(DwordList*, int*);
 
 static void
 printTree(Dnode*);
@@ -27,17 +28,7 @@ static int
 readDefinitions(Dconfig*, Ddictionary*);
 
 static void
-runCommand(char*, Ddictionary*);
-
-/*******************************************************************************
- * Extern declarations
- */
-
-extern int
-processArgs(Dconfig*, Ddictionary*);
-
-extern void
-runInteractive(Dconfig*, Ddictionary*);
+runCommand(char*, Ddictionary*, Dconfig*);
 
 /*******************************************************************************
  * Static functions
@@ -69,12 +60,16 @@ help(char* execName)
 static void
 printDwordList(DwordList* list, int* counter)
 {
-    if(list->next)
+    if(list)
     {
-        printDwordList(list->next, counter);
-    }
+        if(list->next)
+        {
+            printDwordList(list->next, counter);
+        }
 
-    printf("\t%s\n", list->word->word);
+        ++*counter;
+        printf("\t%s\n", list->word->word);
+    }
 }
 
 /** Prints the dictionary on the standard output.
@@ -292,15 +287,17 @@ runCommand(char* command, Ddictionary* dict, Dconfig* config)
         if(strncmp(command, "BASE ", 5) == 0 ||
             strncmp(command, "base ", 5) == 0)
         {
-            if(config->d_option)
-            {
-                dict->counter = 0;
-            }
+            dict->counter = 0;
 
             word = Ddictionary_getOrAddWord(dict, argument);
 
             printf("Bases du mot \"%s\" :\n", argument);
-            printDwordList(word->bases);
+            printDwordList(word->bases, &dict->counter);
+            
+            if(config->d_option)
+            {
+                printf("Cases parcourues : %d\n", dict->counter);                            
+            }
         }
         else if(strncmp(command, "DERI ", 5) == 0 ||
             strncmp(command, "deri ", 5) == 0)
@@ -313,7 +310,12 @@ runCommand(char* command, Ddictionary* dict, Dconfig* config)
             word = Ddictionary_getOrAddWord(dict, argument);
 
             printf("Dérivés du mot \"%s\" :\n", argument);
-            printDwordList(word->derivatives);
+            printDwordList(word->derivatives, &dict->counter);
+
+            if(config->d_option)
+            {
+                printf("Cases parcourues : %d\n", dict->counter);                            
+            }
         }
         else if(strncmp(command, "SYNO ", 5) == 0 ||
             strncmp(command, "syno ", 5) == 0)
@@ -326,7 +328,12 @@ runCommand(char* command, Ddictionary* dict, Dconfig* config)
             word = Ddictionary_getOrAddWord(dict, argument);
 
             printf("Synonymes du mot \"%s\" :\n", argument);
-            printDwordList(word->synonyms);
+            printDwordList(word->synonyms, &dict->counter);
+
+            if(config->d_option)
+            {
+                printf("Cases parcourues : %d\n", dict->counter);                            
+            }
         }
         else if(strncmp(command, "INFO ", 5) == 0 ||
             strncmp(command, "info ", 5) == 0)
@@ -455,7 +462,7 @@ processArgs(Dconfig* config, Ddictionary* dict)
     for(i = 0; i < config->commandsNb; i++)
     {
         printf("\nCommande : %s\n", config->commands[i]);
-        runCommand(config->commands[i], dict);
+        runCommand(config->commands[i], dict, config);
     }
 
     return TRUE;

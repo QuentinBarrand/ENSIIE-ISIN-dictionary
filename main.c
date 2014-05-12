@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
+#include "application.h"
 #include "Dconfig.h"
 #include "Ddictionary.h"
-#include "Dnode.h"
 
 
 int main(int argc, char** argv)
