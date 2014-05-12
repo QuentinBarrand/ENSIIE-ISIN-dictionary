@@ -49,6 +49,7 @@ Ddictionary_runCommand(char*, Ddictionary*);
 static Dword*
 Ddictionary_getOrAddWord(Ddictionary* dict, char* word, bool addToList)
 {
+    bool existed;
     char tempWord[MAX_WORD_SIZE];
     int c, nbChars;
     int i;
@@ -57,6 +58,8 @@ Ddictionary_getOrAddWord(Ddictionary* dict, char* word, bool addToList)
     tree = dict->tree;
 
     nbChars = strlen(word);
+
+    existed = true;
 
     for(i = 0; i < nbChars; i++)
     {
@@ -69,12 +72,14 @@ Ddictionary_getOrAddWord(Ddictionary* dict, char* word, bool addToList)
         {
             tree->children[c - 'a'] = Dnode_new();
             tree->children[c - 'a']->element = Dword_new(tempWord);
+
+            existed = false;
         }
 
         tree = tree->children[c - 'a'];
     }
 
-    if(addToList)
+    if(addToList && ! existed)
     {
         DwordList_add(&dict->words, ((Dword*)tree->element));
     }
@@ -222,7 +227,7 @@ Ddictionary_readCommands(Dconfig* config)
 /** Reads the dictionary's configuration file.
  *
  * \param config the application's configuration.
- * \param dictionary the Ddictionary object to be populated.
+ * \param dict the Ddictionary object to be populated.
  *
  * \returns `0` if an error occured, else `1`.
  */
@@ -300,7 +305,7 @@ Ddictionary_readDefinitions(Dconfig* config, Ddictionary* dict)
 /** Runs a command in a specified dictionary.
  *
  * \param command the command to be executed.
- * \param dictionary the dictionary in which the command should be executed.
+ * \param dict the dictionary in which the command should be executed.
  */
 static void
 Ddictionary_runCommand(char* command, Ddictionary* dict)
@@ -308,35 +313,52 @@ Ddictionary_runCommand(char* command, Ddictionary* dict)
     // Looks like a valid command
     if(strlen(command) > 5)
     {
-        char* searchedWord;
-        searchedWord = strndup(command + 5, 20);
-
         Dword* word;
-        word = Ddictionary_getOrAddWord(dict, searchedWord, false);
+
+        char* argument;
+        argument = strndup(command + 5, 20);
 
         if(strncmp(command, "BASE ", 5) == 0 ||
             strncmp(command, "base ", 5) == 0)
         {
-            printf("Bases du mot \"%s\" :\n", searchedWord);
+            word = Ddictionary_getOrAddWord(dict, argument, false);
+
+            printf("Bases du mot \"%s\" :\n", argument);
             Dword_printBases(word);
         }
         else if(strncmp(command, "DERI ", 5) == 0 ||
             strncmp(command, "deri ", 5) == 0)
         {
-            printf("Dérivés du mot \"%s\" :\n", searchedWord);
+            word = Ddictionary_getOrAddWord(dict, argument, false);
+
+            printf("Dérivés du mot \"%s\" :\n", argument);
             Dword_printDerivatives(word);
         }
         else if(strncmp(command, "SYNO ", 5) == 0 ||
             strncmp(command, "syno ", 5) == 0)
         {
-            printf("Synonymes du mot \"%s\" :\n", searchedWord);
+            word = Ddictionary_getOrAddWord(dict, argument, false);
+
+            printf("Synonymes du mot \"%s\" :\n", argument);
             Dword_printSynonyms(word);
         }
         else if(strncmp(command, "INFO ", 5) == 0 ||
             strncmp(command, "info ", 5) == 0)
         {
-            // Process INFO
-            // TODO
+            DwordList* list;
+            list = dict->words;
+
+            printf("Mots correspondant à l'expression %s : \n", argument);
+
+            while(list)
+            {
+                if(Dword_doesMatch(list->word, argument))
+                {
+                    printf("\t%s\n", list->word->word);
+                }
+
+                list = list->next;
+            }
         }
         else
         {
@@ -346,7 +368,7 @@ Ddictionary_runCommand(char* command, Ddictionary* dict)
 
         printf("\n");
 
-        free(searchedWord);
+        free(argument);
     }
 }
 
@@ -372,6 +394,11 @@ Ddictionary_free(Ddictionary* dict)
     free(dict);
 }
 
+/** Allocates a new Ddictionary object in memory, and set it Ddicitonary.tree to
+ * a new Dnode using Dnode_new().
+ *
+ * \returns A new, freshly allocated Ddictionary object.
+ */
 extern Ddictionary*
 Ddictionary_new()
 {

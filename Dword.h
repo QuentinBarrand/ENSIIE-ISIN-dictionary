@@ -10,6 +10,7 @@
 
 typedef struct _DwordList DwordList;
 
+/** Structure containing representing a word. */
 typedef struct _Dword
 {
     /** The actual dictionary word member that's contained into the Dnode. */
@@ -40,7 +41,7 @@ Dword_addSynonym(Dword*, Dword*);
 extern void
 Dword_free(void*);
 
-extern int
+extern bool
 Dword_doesMatch(Dword*, char*);
 
 extern Dword*

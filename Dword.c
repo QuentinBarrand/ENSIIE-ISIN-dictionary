@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -82,10 +83,62 @@ Dword_free(void* void_word)
  *
  * \returns `1` if the regex matches the specified Dword, else `0`.
  */
-extern int
+extern bool
 Dword_doesMatch(Dword* word, char* regex)
 {
+    bool status;
+    status = true;
 
+    int i, j;
+    i = j = 0;
+
+    while(word->word[i] != '\0' && regex[j] != '\0')
+    {
+        // If the two current chars are identical, look at the next ones
+        if(word->word[i] == regex[j])
+        {
+            // If this is the last character in regex but not in word
+            if(regex[j + 1] == '\0' && word->word[i + 1] != '\0')
+            {
+                status = false;
+            }
+            else
+            {
+                status = true;
+            }
+
+            i++;
+            j++;
+        }
+        // If we're having the wildcard char *
+        else if(regex[j] == '*')
+        {
+            // If * is the last character in regex
+            if(regex[j + 1] == '\0')
+            {
+                return true;
+            }
+
+            status = false;
+
+            // If the regex's next char matches the word's current
+            if(regex[j + 1] == word->word[i])
+            {
+                j++;
+            }
+            else
+            {
+                i++;
+            }
+        }
+        // If we're having two charaters that don't match
+        else
+        {
+            return false;
+        }
+    }
+    
+    return status;
 }
 
 /** Prints the list of the argument's bases on the standard output.

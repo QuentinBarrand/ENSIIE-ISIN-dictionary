@@ -6,7 +6,7 @@
 #include "Dnode.h"
 #include "Dword.h"
 
-/** A container for the N-ary tree and othr things. */
+/** A container for the N-ary tree and other things. */
 typedef struct _Ddictionary
 {
     /** The dictionary itself : a tree of Dnode. */

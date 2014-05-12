@@ -5,6 +5,10 @@
 
 #include "Dword.h"
 
+/*******************************************************************************
+ * Extern functions
+ */
+
 /** Allocates a new DwordList object with a specified Dwordobject and adds
  * it to a specified list.
  *
