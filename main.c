@@ -4,7 +4,13 @@
 #include "Dconfig.h"
 #include "Ddictionary.h"
 
-
+/** The aplication's main entry point.
+ *
+ * \param argc the number or arguments.
+ * \param argv the array of arguments.
+ *
+ * \returns A status code the parent process. 
+ */
 int main(int argc, char** argv)
 {
     int returnValue;
