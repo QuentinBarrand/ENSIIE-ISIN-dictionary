@@ -17,17 +17,7 @@ extern void
 Dword_addBase(Dword* word, Dword* base)
 {
     DwordList_add(&word->bases, base);
-}
-
-/** Adds a word as another word's derivative and vice versa.
- *
- * \param word the word to add a derivative to.
- * \param derivative the word that should be added as a derivative.
- */
-extern void
-Dword_addDerivative(Dword* word, Dword* derivative)
-{
-    DwordList_add(&word->derivatives, derivative);
+    DwordList_add(&base->derivatives, word);
 }
 
 /** Adds a synonym relation between two words. They will be added to each
@@ -43,6 +33,13 @@ Dword_addSynonym(Dword* word, Dword* synonym)
     DwordList_add(&synonym->synonyms, word);
 }
 
+/** Checks if the specified Dword object contains a string.
+ *
+ * \param word the word to check into.
+ * \param string the string to compare to Dword.word.
+ *
+ * \returns `true` if the Dword.word contains the string, else `false`.
+ */
 extern bool
 Dword_contains(Dword* word, char* string)
 {
@@ -54,42 +51,6 @@ Dword_contains(Dword* word, char* string)
     {
         return false;
     }
-}
-
-/** Allocates a new Dword object and puts the argument in its word field.
- *
- * \param word a character string to initialize the word field with.
- *
- * \returns A new, freshly allocated Dword object.
- */
-extern Dword*
-Dword_new(char* word)
-{
-    Dword* newDword;
-    newDword = calloc(1, sizeof(Dword));
-
-    strcpy(newDword->word, word);
-
-    return newDword;
-}
-
-/** Frees a word and its bases, derivatives and synonyms lists recursively.
- *
- * \param void_word the Dword to be freed. Because this function is called  by
- *    Dnode_free() using its pointer, its argument must be of generic type
- *    void*.
- */
-extern void
-Dword_free(void* void_word)
-{
-    Dword* word;
-    word = (Dword*)void_word;
-
-    DwordList_free(word->bases);
-    DwordList_free(word->derivatives);
-    DwordList_free(word->synonyms);
-
-    free(word);
 }
 
 /** Compares a word to a regular expression.
@@ -156,4 +117,40 @@ Dword_doesMatch(Dword* word, char* regex)
     }
     
     return status;
+}
+
+/** Frees a word and its bases, derivatives and synonyms lists recursively.
+ *
+ * \param void_word the Dword to be freed. Because this function is called  by
+ *    Dnode_free() using its pointer, its argument must be of generic type
+ *    void*.
+ */
+extern void
+Dword_free(void* void_word)
+{
+    Dword* word;
+    word = (Dword*)void_word;
+
+    DwordList_free(word->bases);
+    DwordList_free(word->derivatives);
+    DwordList_free(word->synonyms);
+
+    free(word);
+}
+
+/** Allocates a new Dword object and puts the argument in its word field.
+ *
+ * \param word a character string to initialize the word field with.
+ *
+ * \returns A new, freshly allocated Dword object.
+ */
+extern Dword*
+Dword_new(char* word)
+{
+    Dword* newDword;
+    newDword = calloc(1, sizeof(Dword));
+
+    strcpy(newDword->word, word);
+
+    return newDword;
 }

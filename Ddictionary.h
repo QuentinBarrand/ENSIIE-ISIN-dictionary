@@ -7,8 +7,13 @@
 #include "Dnode.h"
 
 
+// Those declarations are necessary because of circular dependencies
 typedef struct _Dword Dword;
 typedef struct _DwordList DwordList;
+
+/*******************************************************************************
+ * Dword type
+ */
 
 /** Structure containing representing a word. */
 typedef struct _Dword
@@ -29,6 +34,10 @@ typedef struct _Dword
     DwordList* synonyms;
 } Dword;
 
+/*******************************************************************************
+ * DwordList type
+ */
+
 /** Linked list allowing us to represent a one-to-many relationship between
  * a base Dnode and its derivatives and synonyms.
  */
@@ -43,6 +52,9 @@ typedef struct _DwordList
 
 typedef struct _Dword Dword;
 
+/*******************************************************************************
+ * Ddictionary type
+ */
 
 /** A container for the N-ary tree and other things. */
 typedef struct _Ddictionary
@@ -50,13 +62,21 @@ typedef struct _Ddictionary
     /** The dictionary itself : a tree of Dnode. */
     Dnode* tree;
 
-    #warning doc à refaire
-    /** A list of all the proper words contained into the tree. */
+    /** A hastable of DwordList. The key of the hashtable is the multiplication
+     * of two consecutive letters that are present in the DwordList's words.
+     */
     DwordList* hashTable[ALPHABET_SIZE * ALPHABET_SIZE + ALPHABET_SIZE];
 
+    /** A counter that allows counting the number of iterations that are
+     * necessary to run a request (`-d` option).
+     */
     int counter;
 } Ddictionary;
 
+
+/*******************************************************************************
+ * Ddictionary extern functions
+ */
 
 extern Ddictionary*
 Ddictionary_new();
@@ -69,7 +89,7 @@ Ddictionary_getOrAddWord(Ddictionary*, char*);
 
 
 /*******************************************************************************
- * Dword extern functions
+ * DwordList extern functions
  */
 
 extern void
@@ -90,19 +110,16 @@ extern void
 Dword_addBase(Dword*, Dword*);
 
 extern void
-Dword_addDerivative(Dword*, Dword*);
-
-extern void
 Dword_addSynonym(Dword*, Dword*);
 
 extern bool
 Dword_contains(Dword*, char*);
 
-extern void
-Dword_free(void*);
-
 extern bool
 Dword_doesMatch(Dword*, char*);
+
+extern void
+Dword_free(void*);
 
 extern Dword*
 Dword_new();

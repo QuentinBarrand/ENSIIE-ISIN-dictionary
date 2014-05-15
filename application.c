@@ -241,7 +241,6 @@ readDefinitions(Dconfig* config, Ddictionary* dict)
             base = Ddictionary_getOrAddWord(dict, tempBase);
 
             Dword_addBase(currentWord, base);
-            Dword_addDerivative(base, currentWord);
         }
 
         // Finally, add the synonyms
