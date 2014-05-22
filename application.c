@@ -52,7 +52,7 @@ help(char* execName)
         "\n", execName);
 }
 
-/** Prints the word in the DwordList object.
+/** Prints all the words in a DwordList object.
  *
  * \param list the list containing the Dword->word to be printed.
  * \param counter a pointer to an int counter to increment.
@@ -135,7 +135,7 @@ readCommands(Dconfig* config)
 
     stream = freopen(config->commandsPath, "r", stream);
 
-    for(i = 0; i < config->commandsNb; i++)
+    for(i = 0; i <= config->commandsNb; i++)
     {
         /* This parameter is actually not used by getline() since
          * config->commands[i] is NULL.
@@ -363,7 +363,7 @@ runCommand(char* command, Ddictionary* dict, Dconfig* config)
                     {
                         if(Dword_doesMatch(list->word, argument))
                         {
-                            if(! DwordList_exists(tempList, list->word->word))
+                            if(! DwordList_contains(tempList, list->word->word))
                             {
                                 /* Populate a temporary list that we can filter 
                                  * to avoid printing 2 times the same word.

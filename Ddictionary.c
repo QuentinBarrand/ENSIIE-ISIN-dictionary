@@ -75,7 +75,7 @@ Ddictionary_getOrAddWord(Ddictionary* dict, char* word)
         c1 = word[i] - 'a';
         c2 = word[i + 1] - 'a';
 
-        if(! DwordList_exists(dict->hashTable[(c1 * ALPHABET_SIZE) + c2], 
+        if(! DwordList_contains(dict->hashTable[(c1 * ALPHABET_SIZE) + c2], 
             tree->element))
         {
             DwordList_add(&dict->hashTable[(c1 * ALPHABET_SIZE) + c2], 

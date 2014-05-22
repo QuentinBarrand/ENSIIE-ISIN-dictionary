@@ -29,8 +29,32 @@ Dword_addBase(Dword* word, Dword* base)
 extern void
 Dword_addSynonym(Dword* word, Dword* synonym)
 {
-    DwordList_add(&word->synonyms, synonym);
+    DwordList* list;
+
+    // Add synonym to the current word's synonyms list
+    DwordList_add(&word->synonyms, synonym);    
     DwordList_add(&synonym->synonyms, word);
+
+    /* For each synonym of the current word, 
+    * add the new synonym to them and add them to the new synonym
+    */
+    list = word->synonyms;
+
+    do
+    {
+        if(! Dword_equals(list->word, synonym))
+        {
+            DwordList_add(&list->word->synonyms, synonym);            
+        }
+
+        if(! DwordList_contains(synonym->synonyms, list->word->word) &&
+           ! Dword_equals(synonym, list->word))
+        {
+            DwordList_add(&synonym->synonyms, list->word);
+        }
+
+        list = list->next;
+    } while(list);
 }
 
 /** Checks if the specified Dword object contains a string.
@@ -118,6 +142,25 @@ Dword_doesMatch(Dword* word, char* regex)
     
     return status;
 }
+
+/** Compares two words.
+ *
+ * \param word1 the first word to be compared.
+ * \param word2 the second word to be compared.
+ *
+ * \returns `true` if the two words are identical, else `false`.
+ */
+extern bool
+Dword_equals(Dword* word1, Dword* word2)
+{
+    if(Dword_contains(word1, word2->word))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 
 /** Frees a word and its bases, derivatives and synonyms lists recursively.
  *

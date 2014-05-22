@@ -96,7 +96,7 @@ extern void
 DwordList_add(DwordList**, Dword*);
 
 extern bool
-DwordList_exists(DwordList*, char*);
+DwordList_contains(DwordList*, char*);
 
 extern void
 DwordList_free(DwordList*);
@@ -117,6 +117,9 @@ Dword_contains(Dword*, char*);
 
 extern bool
 Dword_doesMatch(Dword*, char*);
+
+extern bool
+Dword_equals(Dword*, Dword*);
 
 extern void
 Dword_free(void*);

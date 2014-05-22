@@ -35,7 +35,7 @@ DwordList_add(DwordList** list, Dword* word)
  * \returns `true` if the word is present in the list, else `false`.
  */
 extern bool
-DwordList_exists(DwordList* list, char* word)
+DwordList_contains(DwordList* list, char* word)
 {
     while(list)
     {
